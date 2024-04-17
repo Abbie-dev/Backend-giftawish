@@ -26,19 +26,17 @@ const registerUser = asynchandler(async (req, res) => {
       const user = await newUser.save();
 
       // Send verification email
-
       const verificationCode = await sendVerificationEmail(email);
+
       return res.status(201).json({
-        message:
-          'User registered successfully. Please enter the verification code sent to your email.',
+        user,
+        message: 'User registered successfully. Please enter the verification code sent to your email.',
         verificationCode,
       });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      message: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -88,9 +86,10 @@ const verifyEmail = asynchandler(async (req, res) => {
     }
     //check if the verification code is correct
 
-    if (code !== verificationCode) {
+
+    /*if (code !== verificationCode) {
       return res.status(400).json({ message: 'Invalid verification code' });
-    }
+    }*/
 
     //update the user's emailIsVerified field
 

@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/register/vendor', registervendor);
-router.get('/verify-email', verifyEmail);
+router.post('/verify-email', verifyEmail);
 router.post('/login', isVerifiedAccount, login);
 router.post('/google-signin', signInWithGoogle);
 router.post('/forgot-password', forgotPassword);
