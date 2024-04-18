@@ -24,3 +24,7 @@ export const getAllVendors = asyncHandler(async (req, res) => {
     });
   }
 });
+export const createCategory = asyncHandler(async (req, res) => { });
+export const updateCategory = asyncHandler(async (req, res) => { });
+export const deleteCategory = asyncHandler(async (req, res) => { });
+export const getAllCategories = asyncHandler(async (req, res) => { });

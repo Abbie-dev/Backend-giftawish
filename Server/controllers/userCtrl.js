@@ -430,3 +430,7 @@ export const getBlockedUsers = asyncHandler(async (req, res) => {
     });
   }
 });
+
+export const createWishlist = asyncHandler(async (req, res) => { })
+export const getMyWishlists = asyncHandler(async (req, res) => { })
+export const addItemsToWishlist = asyncHandler(async (req, res) => { })

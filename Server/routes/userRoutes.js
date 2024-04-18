@@ -14,6 +14,9 @@ import {
   getBlockedUsers,
   getFriendList,
   searchUserByUsername,
+  createWishlist,
+  getMyWishlists,
+  addItemsToWishlist
 } from '../controllers/userCtrl.js';
 
 const router = express.Router();
@@ -37,4 +40,11 @@ router.post('/blockUser', isAuthenticated, blockUser);
 router.post('/unblockUser', isAuthenticated, unblockUser);
 router.get('/getBlockedusers', isAuthenticated, getBlockedUsers);
 router.get('/getFriendlist', isAuthenticated, getFriendList);
+
+//wishlist routes
+
+router.post("/createWishlist", isAuthenticated, createWishlist);
+router.get('/myWishlists', isAuthenticated, getMyWishlists);
+router.post('/wishlist/addItems', isAuthenticated, addItemsToWishlist);
+
 export default router;
