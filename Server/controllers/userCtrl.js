@@ -48,6 +48,10 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       if (req.file) {
         user.profileImage = req.file.filename;
       }
+
+      // Parse the birthday string into a Date object
+      const birthdayString = req.body.birthday;
+      const birthday = birthdayString ? new Date(birthdayString) : user.birthday;
       // update the user profile with the new fields
 
       user.firstname = req.body.firstname || user.firstname;
@@ -55,7 +59,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       user.username = req.body.username || user.username;
       user.email = req.body.email || user.email;
       user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-      user.birthday = req.body.birthday || user.birthday;
+      user.birthday = birthday;
 
       await user.save();
 
