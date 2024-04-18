@@ -1,8 +1,9 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import NodeCache from 'node-cache';
 dotenv.config();
 //create a cache for storing verification codes
-const otpCache = new Map();
+const otpCache = new NodeCache({ stdTTL: 300 });
 
 // Create a Nodemailer transporter with SMTP server configuration
 const transporter = nodemailer.createTransport({

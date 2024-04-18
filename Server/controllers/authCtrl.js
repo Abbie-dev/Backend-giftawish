@@ -92,7 +92,8 @@ const verifyEmail = asynchandler(async (req, res) => {
     //check if the verification code is correct
     const storedVerificationCode = otpCache.get(email);
 
-    if (code !== storedVerificationCode) {
+
+    if (!storedVerificationCode || code !== storedVerificationCode) {
       return res.status(400).json({ message: 'Invalid verification code' });
     }
 
@@ -109,6 +110,35 @@ const verifyEmail = asynchandler(async (req, res) => {
       message,
     });
     return res.status(200).json({ message: 'Email verified!', person });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//resend verification code
+
+const resendVerificationCode = asynchandler(async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Find the user or vendor by email
+    const user = await User.findOne({ email });
+    const vendor = await Vendor.findOne({ email });
+
+    if (!user && !vendor) {
+      return res.status(400).json({ message: 'Invalid email' });
+    }
+
+    //resend the verification code
+    const verificationCode = await sendVerificationEmail(email);
+
+    otpCache.set(email, verificationCode);
+    return res.status(201).json({
+      verificationCode,
+      message:
+        ' Please check your email to verify your account.',
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -341,6 +371,7 @@ export {
   registerUser,
   registervendor,
   verifyEmail,
+  resendVerificationCode,
   login,
   signInWithGoogle,
   forgotPassword,

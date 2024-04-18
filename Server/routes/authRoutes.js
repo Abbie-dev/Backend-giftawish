@@ -3,6 +3,7 @@ import express from 'express';
 import {
   registerUser,
   verifyEmail,
+  resendVerificationCode,
   login,
   signInWithGoogle,
   forgotPassword,
@@ -19,6 +20,7 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/register/vendor', registervendor);
 router.post('/verify-email', verifyEmail);
+router.post('/verify-email/resendCode', resendVerificationCode);
 router.post('/login', isVerifiedAccount, login);
 router.post('/google-signin', signInWithGoogle);
 router.post('/forgot-password', forgotPassword);
