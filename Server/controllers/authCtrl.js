@@ -6,11 +6,13 @@ import jwt from 'jsonwebtoken';
 import {
   sendVerificationEmail,
   sendEmail,
+  otpCache,
 } from '../utils/emailVerificationService.js';
 import createToken from '../utils/createToken.js';
 
 import dotenv from 'dotenv';
 dotenv.config();
+
 
 //register user
 const registerUser = asynchandler(async (req, res) => {
@@ -53,11 +55,14 @@ const registervendor = asynchandler(async (req, res) => {
       const newVendor = new Vendor(req.body);
       const vendor = await newVendor.save();
       // Send verification email
-      await sendVerificationEmail(email, vendor._id);
+      const verificationCode = await sendVerificationEmail(email);
       return res.status(201).json({
+        vendor,
+        verificationCode,
         message:
           'Vendor registered successfully. Please check your email to verify your account.',
       });
+
     }
   } catch (error) {
     console.log(error);
@@ -85,11 +90,11 @@ const verifyEmail = asynchandler(async (req, res) => {
       return res.status(400).json({ message: 'Email already verified' });
     }
     //check if the verification code is correct
+    const storedVerificationCode = otpCache.get(email);
 
-
-    /*if (code !== verificationCode) {
+    if (code !== storedVerificationCode) {
       return res.status(400).json({ message: 'Invalid verification code' });
-    }*/
+    }
 
     //update the user's emailIsVerified field
 
@@ -103,7 +108,7 @@ const verifyEmail = asynchandler(async (req, res) => {
       subject: 'Your account has been verified',
       message,
     });
-    return res.status(200).json({ message: 'Email verified!', user });
+    return res.status(200).json({ message: 'Email verified!', person });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -343,4 +348,5 @@ export {
   forgotPasswordVendor,
   resetPasswordVendor,
   logout,
+
 };

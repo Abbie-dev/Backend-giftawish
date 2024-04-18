@@ -1,7 +1,8 @@
 import nodemailer from 'nodemailer';
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
+//create a cache for storing verification codes
+const otpCache = new Map();
 
 // Create a Nodemailer transporter with SMTP server configuration
 const transporter = nodemailer.createTransport({
@@ -17,7 +18,9 @@ export const sendVerificationEmail = async (email) => {
   //generate  a random four digit code
 
   const verificationCode = Math.floor(1000 + Math.random() * 9000);
+  //store the verification code in the cache
 
+  otpCache.set(email, verificationCode);
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
@@ -49,3 +52,5 @@ export const sendEmail = async (options) => {
     console.log('Error sending  email:', error);
   }
 };
+//export otpCache
+export { otpCache };
