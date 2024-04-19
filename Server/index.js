@@ -6,6 +6,7 @@ import dbConnect from './config/dbConnect.js';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
+import vendorRouter from './routes/vendorRoutes.js'
 import { notFound, errorHandler } from './middlewares/errorHandlers.js';
 
 const app = express();
@@ -18,9 +19,10 @@ dotenv.config();
 dbConnect();
 
 //routes
+app.use('/api/', adminRouter);
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/', adminRouter);
+app.use('/api/vendor', vendorRouter);
 
 //error handlers
 app.use(notFound);
