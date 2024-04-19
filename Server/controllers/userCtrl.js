@@ -431,6 +431,27 @@ export const getBlockedUsers = asyncHandler(async (req, res) => {
   }
 });
 
-export const createWishlist = asyncHandler(async (req, res) => { })
-export const getMyWishlists = asyncHandler(async (req, res) => { })
-export const addItemsToWishlist = asyncHandler(async (req, res) => { })
+export const createWishlist = asyncHandler(async (req, res) => {
+  try {
+
+  } catch (error) {
+    console.log(error);
+    res.status.json({ error: error.message });
+  }
+})
+export const getMyWishlists = asyncHandler(async (req, res) => {
+  try {
+
+  } catch (error) {
+    console.log(error);
+    res.status.json({ error: error.message });
+  }
+})
+export const addItemsToWishlist = asyncHandler(async (req, res) => {
+  try {
+
+  } catch (error) {
+    console.log(error);
+    res.status.json({ error: error.message });
+  }
+})

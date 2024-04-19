@@ -9,6 +9,6 @@ router.get('/all-vendors', isAuthenticated, isAdmin, getAllVendors);
 router.post('/createCategory', isAuthenticated, isAdmin, createCategory)
 router.get('/categories', isAuthenticated, isAdmin, getAllCategories);
 router.put('/updateCategory', isAuthenticated, isAdmin, updateCategory);
-router.delete('/deleteCategory', isAuthenticated, isAdmin, deleteCategory);
+router.delete('/deleteCategory/:id', isAuthenticated, isAdmin, deleteCategory);
 
 export default router;
