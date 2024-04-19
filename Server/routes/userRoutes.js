@@ -16,7 +16,9 @@ import {
   searchUserByUsername,
   createWishlist,
   getMyWishlists,
-  addItemsToWishlist
+  addItemsToWishlist,
+  removeItemFromWishlist,
+  deleteWishlist,
 } from '../controllers/userCtrl.js';
 
 const router = express.Router();
@@ -45,6 +47,8 @@ router.get('/getFriendlist', isAuthenticated, getFriendList);
 
 router.post("/createWishlist", isAuthenticated, createWishlist);
 router.get('/myWishlists', isAuthenticated, getMyWishlists);
-router.post('/wishlist/addItems', isAuthenticated, addItemsToWishlist);
+router.post('/wishlist/:wishlistId/addItems', isAuthenticated, addItemsToWishlist);
+router.delete('/wishlist/:wishlistId/removeItem/:itemId', isAuthenticated, removeItemFromWishlist);
+router.delete('/wishlists/:wishlistId', isAuthenticated, deleteWishlist)
 
 export default router;

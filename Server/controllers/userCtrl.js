@@ -1,4 +1,5 @@
 import User from '../models/userModel.js';
+import Wishlist from '../models/wishlistModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import uploadProfileImage from '../config/multerConfig.js';
@@ -430,9 +431,17 @@ export const getBlockedUsers = asyncHandler(async (req, res) => {
     });
   }
 });
-
+//wishlist
 export const createWishlist = asyncHandler(async (req, res) => {
   try {
+    const { title, description } = req.body;
+    const user = req.user._id;
+    const wishlist = new Wishlist({ user, title, description });
+
+    const createdWishlist = await wishlist.save();
+    res.status(200).json(createdWishlist);
+
+
 
   } catch (error) {
     console.log(error);
@@ -455,3 +464,6 @@ export const addItemsToWishlist = asyncHandler(async (req, res) => {
     res.status.json({ error: error.message });
   }
 })
+
+export const removeItemFromWishlist = asyncHandler(async (req, res) => { });
+export const deleteWishlist = asyncHandler(async (req, res) => { });
