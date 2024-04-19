@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import Product from '../models/productModel.js';
+import upload from '../config/multerConfig.js'
 
 
 export const addProduct = asyncHandler(async (req, res) => {
