@@ -46,8 +46,18 @@ export const createCategory = asyncHandler(async (req, res) => {
 });
 export const updateCategory = asyncHandler(async (req, res) => {
   try {
-
-
+    const { id } = req.params
+    const { name, description } = req.body
+    const findCategory = await Category.findById(id);
+    if (!findCategory) {
+      return res.status(400).json({
+        message: "Category does not exist"
+      })
+    }
+    findCategory.description = description || findCategory.description
+    findCategory.name = name || findCategory.name
+    const updatedCategory = await findCategory.save()
+    return res.status(200).json({ updatedCategory, message: "category updated successfully" })
   } catch (error) {
     console.error(error);
     res.status(500).json({
