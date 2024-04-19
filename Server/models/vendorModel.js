@@ -4,9 +4,7 @@ import bcrypt from 'bcrypt';
 const vendorSchema = new mongoose.Schema({
   companyName: { type: String, required: true },
   phoneNumber: { type: String, required: true },
-  productCategories: [
-    { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
-  ],
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
