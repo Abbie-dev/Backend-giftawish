@@ -7,7 +7,7 @@ const vendorSchema = new mongoose.Schema({
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  isVerified: { type: Boolean, default: false },
+  emailIsVerified: { type: Boolean, default: false },
 });
 
 vendorSchema.pre('save', async function (next) {

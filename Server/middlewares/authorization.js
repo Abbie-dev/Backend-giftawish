@@ -38,3 +38,4 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
     res.status(500).json({ error: error.message });
   }
 });
+export const isVendorAuthenticated = asyncHandler(async (req, res, next) => { })
