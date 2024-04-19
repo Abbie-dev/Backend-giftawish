@@ -450,6 +450,12 @@ export const createWishlist = asyncHandler(async (req, res) => {
 })
 export const getMyWishlists = asyncHandler(async (req, res) => {
   try {
+    const user = req.user._id;
+    const wishlists = await Wishlist.find({ user });
+    if (!wishlists) {
+      return res.status(404).json({ message: 'You dont have any wishlist' });
+    }
+    res.status(200).json(wishlists);
 
   } catch (error) {
     console.log(error);
