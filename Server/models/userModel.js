@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, default: false },
     profileImage: {
       type: String,
-      default: 'http://facebook.com/cat.png',
+      default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8RCNNiXstGEnqykUFUPSwQg1GQlZk2w0EUA&s',
       required: true,
     },
     password: {
