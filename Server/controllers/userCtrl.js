@@ -142,7 +142,8 @@ export const getAvailableUsers = asyncHandler(async (req, res) => {
 
 export const sendFriendRequest = asyncHandler(async (req, res) => {
   try {
-    const { senderUsername, recipientUsername } = req.body;
+    const senderUsername = req.user.username
+    const { recipientUsername } = req.body;
     //find both users
 
     const sender = await User.findOne({ username: senderUsername });
@@ -186,7 +187,8 @@ export const sendFriendRequest = asyncHandler(async (req, res) => {
 
 export const acceptFriendRequest = asyncHandler(async (req, res) => {
   try {
-    const { receiverUsername, senderUsername } = req.body;
+    const receiverUsername = req.user.username;
+    const { senderUsername } = req.body;
     //find users by username
 
     const self = await User.findOne({ username: receiverUsername });
@@ -221,7 +223,8 @@ export const acceptFriendRequest = asyncHandler(async (req, res) => {
 //decline friend request
 export const rejectFriendRequest = asyncHandler(async (req, res) => {
   try {
-    const { receiverUsername, senderUsername } = req.body;
+    const receiverUsername = req.user.username;
+    const { senderUsername } = req.body;
     const self = await User.findOne({ username: receiverUsername });
     const usernameToReject = await User.findOne({ username: senderUsername });
     if (!self || !usernameToReject) {
@@ -254,7 +257,8 @@ export const rejectFriendRequest = asyncHandler(async (req, res) => {
 //unfriend user
 export const unfriendUser = asyncHandler(async (req, res) => {
   try {
-    const { user, usernameToUnfriend } = req.body;
+    const user = req.user.username;
+    const { usernameToUnfriend } = req.body;
     const self = await User.findOne({ username: user });
     const userToUnfriend = await User.findOne({ username: usernameToUnfriend });
 
@@ -305,7 +309,8 @@ export const unfriendUser = asyncHandler(async (req, res) => {
 //block user
 export const blockUser = asyncHandler(async (req, res) => {
   try {
-    const { self, username } = req.body;
+    const self = req.user.username;
+    const { username } = req.body;
     if (self === username) {
       return res.status(400).json({ message: 'cannot block yourself' });
     }
@@ -352,7 +357,8 @@ export const blockUser = asyncHandler(async (req, res) => {
 
 export const unblockUser = asyncHandler(async (req, res) => {
   try {
-    const { self, username } = req.body;
+    const self = req.user.username;
+    const { username } = req.body;
     //find the user who is doing the unblocking operation
 
     const user = await User.findOne({ username: self });
@@ -385,7 +391,8 @@ export const unblockUser = asyncHandler(async (req, res) => {
 //get list of friends
 export const getFriendList = asyncHandler(async (req, res) => {
   try {
-    const { username } = req.body;
+
+    const username = req.user.username
 
     //find the user
 
@@ -414,7 +421,7 @@ export const getFriendList = asyncHandler(async (req, res) => {
 // get list of blocked users
 export const getBlockedUsers = asyncHandler(async (req, res) => {
   try {
-    const { username } = req.body;
+    const username = req.user.username
     //find the user
     const currentUser = await User.findOne({ username: username }).populate({
       path: 'blockedUsers.userId',
