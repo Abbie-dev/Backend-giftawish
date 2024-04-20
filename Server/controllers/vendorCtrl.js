@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import slugify from 'slugify'
 import Product from '../models/productModel.js';
+import Vendor from '../models/vendorModel.js'
 import { productImageUpload } from '../config/multerConfig.js'
 
 
@@ -18,6 +19,8 @@ export const addProduct = asyncHandler(async (req, res) => {
         const product = new Product({ name, description, price, images: productImages, category, tags, vendor })
         product.slug = slugify(product.name, { lower: true, strict: true })
         const createdProduct = await product.save()
+
+        await Vendor.findByIdAndUpdate(vendor, { $push: { products: createdProduct._id } })
         res.status(201).json(createdProduct)
     } catch (error) {
         console.error(error);
