@@ -1,6 +1,6 @@
 import express from 'express';
 import { isAuthenticated } from '../middlewares/authorization.js';
-import uploadProfileImage from '../config/multerConfig.js';
+import { profileImageUpload } from '../config/multerConfig.js';
 import {
   getUserProfile,
   updateUserProfile,
@@ -27,7 +27,7 @@ router.get('/profile/:id', isAuthenticated, getUserProfile);
 router.put(
   '/profile/:id',
   isAuthenticated,
-  uploadProfileImage,
+  profileImageUpload,
   updateUserProfile
 );
 

@@ -1,27 +1,26 @@
+import cloudinaryConfig from './cloudinaryConfig.js'
 import multer from 'multer';
-import path from 'path';
+import multerCloudinary from 'multer-storage-cloudinary'
 
-//multer storage configuration
-// Define __dirname when running the script with node
-const __dirname = path.resolve();
+//configure cloudinary storage for file uploads
 
+const profileImageStorage = new multerCloudinary.CloudinaryStorage({
+  cloudinary: cloudinaryConfig.v2,
+  params: {
+    folder: 'profile-images',
+    format: async (req, file) => 'jpg',
+  }
+})
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '/uploads'));
-  },
-  filename: (req, file, cb) => {
-    const userId = req.params.id;
-    const extension = path.extname(file.originalname)
-    const newFilename = `profile_${userId}${extension}`
-    cb(null, newFilename);
-  },
-});
+const productImageStorage = new multerCloudinary.CloudinaryStorage({
+  cloudinary: cloudinaryConfig.v2,
+  params: {
+    folder: 'product-images',
+    format: async (req, file) => 'jpg',
+  }
+})
+//multer configuration for profile image upload 
+export const profileImageUpload = multer({ storage: profileImageStorage }).single('profileImage')
 
-//create the multer upload instance
+export const productImageUpload = multer({ storage: productImageStorage }).array('productImages', 6)
 
-const upload = multer({ storage });
-
-const uploadProfileImage = upload.single('profileImage');
-
-export default uploadProfileImage;

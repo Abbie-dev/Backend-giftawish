@@ -2,7 +2,7 @@ import User from '../models/userModel.js';
 import Wishlist from '../models/wishlistModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
-import uploadProfileImage from '../config/multerConfig.js';
+import { profileImageUpload } from '../config/multerConfig.js';
 
 export const getUserProfile = asyncHandler(async (req, res) => {
   try {
