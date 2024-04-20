@@ -12,7 +12,9 @@ export const addProduct = asyncHandler(async (req, res) => {
         if (existingProduct) {
             return res.status(400).json({ error: 'A product with the same name already exists' });
         }
-        const product = new Product({ name, description, price, images, category, tags, vendor })
+
+        const productImages = req.file.map(file => file.filename)
+        const product = new Product({ name, description, price, images: productImages, category, tags, vendor })
 
         const createdProduct = await product.save()
         res.status(201).json(createdProduct)
