@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import slugify from 'slugify'
 import Product from '../models/productModel.js';
+import cloudinary from '../config/cloudinaryConfig.js';
 import Vendor from '../models/vendorModel.js'
 import { productImageUpload } from '../config/multerConfig.js'
 
@@ -39,12 +40,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
         productToUpdate.category = req.body.category || productToUpdate.category
         productToUpdate.tags = req.body.tags || productToUpdate.tags
 
-        //handle image deletion
 
-        if (req.body.deleteImage) {
-            const imagesToDelete = req.body.deleteImage;
-            productToUpdate.images = productToUpdate.images.filter((_, index) => !imagesToDelete.includes(index))
-        }
         if (req.files && req.files.length > 0) {
             const newImages = req.files.map(file => file.filename)
             const imageToReplaceIndex = req.body.imageToReplace;
