@@ -15,8 +15,8 @@ export const addProduct = asyncHandler(async (req, res) => {
             return res.status(400).json({ error: 'A product with the same name already exists' });
         }
 
-        const productImages = req.files.map(file => file.filename)
-        const product = new Product({ name, description, price, images: productImages, category, tags, vendor })
+        const images = req.files.map(file => file.filename)
+        const product = new Product({ name, description, price, images, category, tags, vendor })
         product.slug = slugify(product.name, { lower: true, strict: true })
         const createdProduct = await product.save()
 
@@ -25,5 +25,38 @@ export const addProduct = asyncHandler(async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
+    }
+})
+export const updateProduct = asyncHandler(async (req, res) => {
+    try {
+
+        const productToUpdate = await Product.findById(req.params.id);;
+        if (!productToUpdate) return res.status(404).json('Product not found');
+
+        productToUpdate.name = req.body.name || productToUpdate.name
+        productToUpdate.description = req.body.description || productToUpdate.description
+        productToUpdate.price = req.body.price || productToUpdate.price
+        productToUpdate.category = req.body.category || productToUpdate.category
+        productToUpdate.tags = req.body.tags || productToUpdate.tags
+
+        if (req.files) {
+            productToUpdate.images = req.files.filename
+        }
+        const updatedProduct = await productToUpdate.save()
+        res.status(200).json(updatedProduct)
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+})
+export const allProductsByVendor = asyncHandler(async (req, res) => {
+    try {
+        const vendor = req.vendor._id;
+        const products = await Product.find({ vendor })
+        res.status(200).json(products)
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
     }
 })

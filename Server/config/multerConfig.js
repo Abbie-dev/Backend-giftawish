@@ -40,5 +40,5 @@ const productImageStorage = new multerCloudinary.CloudinaryStorage({
 //multer configuration for profile image upload 
 export const profileImageUpload = multer({ storage: profileImageStorage, limits: { fileSize: 1024 * 1024 } }).single('profileImage')
 
-export const productImageUpload = multer({ storage: productImageStorage, limits: { filesize: 1024 * 1024 } }).array('productImages', 6)
+export const productImageUpload = multer({ storage: productImageStorage, limits: { filesize: 1024 * 1024 } }).array('images', 6)
 
