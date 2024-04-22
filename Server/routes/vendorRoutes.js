@@ -6,5 +6,5 @@ import { addProduct, updateProduct, allProductsByVendor } from '../controllers/v
 const router = express.Router();
 router.post("/addProduct", isVendorAuthenticated, productImageUpload, addProduct)
 router.put('/updateProduct/:id', isVendorAuthenticated, productImageUpload, updateProduct)
-router.get("/allProducts", isVendorAuthenticated, allProductsByVendor)
+router.get("/allProducts", allProductsByVendor)
 export default router;
