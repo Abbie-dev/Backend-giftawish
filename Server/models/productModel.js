@@ -19,6 +19,10 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     inStock: { type: Boolean, default: true },
+    numberOfOrders: {
+      type: Number,
+      default: 0,
+    },
     slug: { type: String, required: true, unique: true },
   },
   { timestamps: true }

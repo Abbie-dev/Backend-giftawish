@@ -3,6 +3,8 @@ import slugify from 'slugify';
 import Product from '../models/productModel.js';
 import Vendor from '../models/vendorModel.js';
 import { productImageUpload } from '../config/multerConfig.js';
+import cloudinaryConfig from '../config/cloudinaryConfig.js';
+import { deleteResourcesFromCloudinary } from '../utils/cloudinaryUtils.js';
 
 export const addProduct = asyncHandler(async (req, res) => {
   const vendor = req.vendor._id;
@@ -117,6 +119,15 @@ export const deleteProduct = asyncHandler(async (req, res) => {
   try {
     const productId = req.params.id;
     const deleteProduct = await Product.findByIdAndDelete(productId);
+    if (!deleteProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    //delete images from cloudinary
+    const publicIds = deleteProduct.images.map(
+      (image) => image.split('/').pop().split('.')[0]
+    );
+    await deleteResourcesFromCloudinary('product-images', publicIds);
+    res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });

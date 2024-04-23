@@ -6,7 +6,8 @@ import dbConnect from './config/dbConnect.js';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
-import vendorRouter from './routes/vendorRoutes.js'
+import vendorRouter from './routes/vendorRoutes.js';
+import productsRouter from './routes/productRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorHandlers.js';
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/', adminRouter);
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/vendor', vendorRouter);
+app.use('/api/products', productsRouter);
 
 //error handlers
 app.use(notFound);
