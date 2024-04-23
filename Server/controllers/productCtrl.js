@@ -19,3 +19,12 @@ export const searchProducts = asyncHandler(async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+export const newProducts = asyncHandler(async (req, res) => {
+  try {
+    const products = await Product.find({}).sort({ _id: -1 }).limit(10);
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
