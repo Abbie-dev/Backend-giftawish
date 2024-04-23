@@ -114,3 +114,13 @@ export const deleteImage = asyncHandler(async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 })
+export const deleteProduct = asyncHandler(async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const deleteProduct = await Product.findByIdAndDelete(productId);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+})
