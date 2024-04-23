@@ -112,35 +112,7 @@ export const allProductsByVendor = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-export const deleteImage = asyncHandler(async (req, res) => {
-  try {
-    const productId = req.params.id;
-    const imageIndex = req.query.index; // Assuming the index of the image to delete is passed as a query parameter
 
-    // Find the product by ID
-    const product = await Product.findById(productId);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    // Check if the image index is valid
-    if (imageIndex < 0 || imageIndex >= product.images.length) {
-      return res.status(400).json({ message: 'Invalid image index' });
-    }
-
-    // Remove the image from the product's images array
-    product.images.splice(imageIndex, 1);
-
-    // Save the updated product
-    const updatedProduct = await product.save();
-
-    // Respond with the updated product
-    res.status(200).json(updatedProduct);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
-  }
-});
 export const deleteProduct = asyncHandler(async (req, res) => {
   try {
     const productId = req.params.id;
