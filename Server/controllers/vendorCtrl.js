@@ -3,7 +3,6 @@ import slugify from 'slugify';
 import Product from '../models/productModel.js';
 import Vendor from '../models/vendorModel.js';
 import { productImageUpload } from '../config/multerConfig.js';
-import cloudinaryConfig from '../config/cloudinaryConfig.js';
 import { deleteResourcesFromCloudinary } from '../utils/cloudinaryUtils.js';
 
 export const addProduct = asyncHandler(async (req, res) => {
@@ -57,9 +56,16 @@ export const updateProduct = asyncHandler(async (req, res) => {
     // Handle image deletion
     if (req.body.imagesToDelete) {
       const imagesToDelete = req.body.imagesToDelete;
+      //delete images from cloudinary
+
+      //remove images from product
       productToUpdate.images = productToUpdate.images.filter(
         (_, index) => !imagesToDelete.includes(index)
       );
+      const publicIds = imagesToDelete.map(
+        (image) => image.split('/').pop().split('.')[0]
+      );
+      await deleteResourcesFromCloudinary('product-images', publicIds);
     }
 
     if (req.files && req.files.length > 0) {
