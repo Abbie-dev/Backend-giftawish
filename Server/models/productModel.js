@@ -3,28 +3,55 @@ import slugify from 'slugify';
 
 const productSchema = new mongoose.Schema(
   {
-    name: { type: 'string', required: true },
-    description: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true },
-    images: [{ type: String }],
+    name: {
+      type: 'string',
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    images: [
+      {
+        type: String,
+      },
+    ],
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
       required: true,
     },
-    tags: [{ type: String }],
+    tags: [
+      {
+        type: String,
+      },
+    ],
     vendor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Vendor',
       required: true,
     },
-    inStock: { type: Boolean, default: true },
+    inStock: {
+      type: Boolean,
+      default: true,
+    },
     numberOfOrders: {
       type: Number,
       default: 0,
     },
-    slug: { type: String, required: true, unique: true },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
   },
   { timestamps: true }
 );

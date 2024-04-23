@@ -28,3 +28,10 @@ export const newProducts = asyncHandler(async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+export const filterProducts = asyncHandler(async (req, res) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
