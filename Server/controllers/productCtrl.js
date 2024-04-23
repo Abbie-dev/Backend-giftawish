@@ -35,3 +35,16 @@ export const filterProducts = asyncHandler(async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+export const getAllProducts = asyncHandler(async (req, res) => {
+  try {
+    const products = await Product.find({})
+      .populate(category)
+      .limit(12)
+      .sort({ createAt: -1 });
+
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
