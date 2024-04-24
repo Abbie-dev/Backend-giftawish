@@ -52,22 +52,35 @@ export const updateProduct = asyncHandler(async (req, res) => {
     productToUpdate.price = req.body.price || productToUpdate.price;
     productToUpdate.category = req.body.category || productToUpdate.category;
     productToUpdate.tags = req.body.tags || productToUpdate.tags;
+    productToUpdate.quantity = req.body.quantity || productToUpdate.quantity;
 
-    // Handle image deletion
+    //handle image deletion
     if (req.body.imagesToDelete) {
-      const imagesToDelete = req.body.imagesToDelete;
-      //delete images from cloudinary
+      let imagesToDeleteArray;
 
-      //remove images from product
+      // Convert imagesToDelete to an array if it's not already one
+      if (Array.isArray(req.body.imagesToDelete)) {
+        imagesToDeleteArray = req.body.imagesToDelete;
+      } else {
+        imagesToDeleteArray = [req.body.imagesToDelete];
+      }
+      const publicIds = imagesToDeleteArray
+        .map((index) => {
+          if (index >= 0 && index < productToUpdate.images.length) {
+            return productToUpdate.images[index].split('/').pop().split('.')[0];
+          }
+        })
+        .filter((publicId) => publicId); // Filter out any undefined values
+
+      // Remove the deleted images from the product
       productToUpdate.images = productToUpdate.images.filter(
-        (_, index) => !imagesToDelete.includes(index)
+        (_, index) => !imagesToDeleteArray.includes(index)
       );
-      const publicIds = imagesToDelete.map(
-        (image) => image.split('/').pop().split('.')[0]
-      );
+
+      // Delete resources from Cloudinary
       await deleteResourcesFromCloudinary('product-images', publicIds);
     }
-
+    //handle image upload
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map((file) => file.filename);
       const imageToReplaceIndex = req.body.imageToReplace;
