@@ -141,6 +141,13 @@ export const deleteProduct = asyncHandler(async (req, res) => {
     if (!deleteProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
+    // Remove the product ID from the vendor's products array
+    const vendor = await Vendor.findById(deleteProduct.vendor);
+    await Vendor.updateOne(
+      { _id: vendor._id },
+      { $pull: { products: productId } }
+    );
     //delete images from cloudinary
     const publicIds = deleteProduct.images.map(
       (image) => image.split('/').pop().split('.')[0]
