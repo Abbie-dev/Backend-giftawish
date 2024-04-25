@@ -9,7 +9,12 @@ import {
 } from '../controllers/vendorCtrl.js';
 
 const router = express.Router();
-router.post('/addProduct', isVendorAuthenticated, addProduct);
+router.post(
+  '/addProduct',
+  isVendorAuthenticated,
+  productImageUpload,
+  addProduct
+);
 router.put(
   '/updateProduct/:id',
   isVendorAuthenticated,
