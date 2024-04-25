@@ -7,8 +7,13 @@ import { deleteResourcesFromCloudinary } from '../utils/cloudinaryUtils.js';
 
 export const addProduct = asyncHandler(async (req, res) => {
   const vendor = req.vendor._id;
-  const { name, description, price, category, tags } = req.body;
+  const { name, description, price, category, quantity, tags } = req.body;
   try {
+    // Check if `name` is a string
+    if (typeof name !== 'string') {
+      console.log(name);
+      return res.status(400).json({ error: 'Product name must be a string' });
+    }
     // Check if a product with the same slug already exists
     const existingProduct = await Product.findOne({
       slug: slugify(name, { lower: true, strict: true }),
@@ -26,6 +31,7 @@ export const addProduct = asyncHandler(async (req, res) => {
       price,
       images,
       category,
+      quantity,
       tags,
       vendor,
     });
