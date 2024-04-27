@@ -48,6 +48,15 @@ export const uploadProductImage = asyncHandler(async (req, res) => {
 
     if (!findProduct) return res.status(404).json('Product not found');
 
+    // Check if the total number of images (existing + new) exceeds the limit
+    const totalImages =
+      findProduct.images.length + (req.files ? req.files.length : 0);
+    const maxImagesAllowed = 6;
+    if (totalImages > maxImagesAllowed) {
+      return res.status(400).json({
+        error: `Maximum ${maxImagesAllowed} images can be uploaded for a product`,
+      });
+    }
     // Initialize images with an empty array
     let images = [];
 
@@ -57,10 +66,9 @@ export const uploadProductImage = asyncHandler(async (req, res) => {
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { $push: { images: { $each: images } } },
+      { images },
       { new: true }
     );
-
     res.status(200).json(updatedProduct);
   } catch (error) {
     console.log(error);
