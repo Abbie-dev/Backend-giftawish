@@ -50,11 +50,12 @@ const productSchema = new mongoose.Schema(
     slug: {
       type: String,
       required: true,
-      unique: true,
     },
   },
   { timestamps: true }
 );
+// Create a compound unique index on 'slug' and 'vendor'
+productSchema.index({ slug: 1, vendor: 1 }, { unique: true });
 productSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true, strict: true });
   next();

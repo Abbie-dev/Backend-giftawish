@@ -12,6 +12,7 @@ export const addProduct = asyncHandler(async (req, res) => {
     // Check if a product with the same slug already exists
     const existingProduct = await Product.findOne({
       slug: slugify(name, { lower: true, strict: true }),
+      vendor: vendor,
     });
     if (existingProduct) {
       return res
