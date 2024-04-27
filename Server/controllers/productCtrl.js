@@ -48,3 +48,5 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
+export const getProductById = asyncHandler(async (req, res) => {});
