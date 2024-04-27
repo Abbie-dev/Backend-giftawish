@@ -38,7 +38,10 @@ export const filterProducts = asyncHandler(async (req, res) => {
 export const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find({})
-      .populate('category')
+      .populate({
+        path: 'category',
+        select: 'name -_id', // Specify the fields from the Category model that you want to populate
+      })
       .limit(12)
       .sort({ createdAt: -1 });
 
