@@ -9,11 +9,6 @@ export const addProduct = asyncHandler(async (req, res) => {
   const vendor = req.vendor._id;
   const { name, description, price, category, quantity, tags } = req.body;
   try {
-    // Check if `name` is a string
-    if (typeof name !== 'string') {
-      console.log(name);
-      return res.status(400).json({ error: 'Product name must be a string' });
-    }
     // Check if a product with the same slug already exists
     const existingProduct = await Product.findOne({
       slug: slugify(name, { lower: true, strict: true }),
@@ -24,12 +19,10 @@ export const addProduct = asyncHandler(async (req, res) => {
         .json({ error: 'A product with the same name already exists' });
     }
 
-    const images = req.files.map((file) => file.filename);
     const product = new Product({
       name,
       description,
       price,
-      images,
       category,
       quantity,
       tags,
@@ -44,6 +37,41 @@ export const addProduct = asyncHandler(async (req, res) => {
     res.status(201).json(createdProduct);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+export const uploadProductImage = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const findProduct = await Product.findById(id);
+
+    if (!findProduct) return res.status(404).json('Product not found');
+
+    // Check if the total number of images (existing + new) exceeds the limit
+    const totalImages =
+      findProduct.images.length + (req.files ? req.files.length : 0);
+    const maxImagesAllowed = 6;
+    if (totalImages > maxImagesAllowed) {
+      return res.status(400).json({
+        error: `Maximum ${maxImagesAllowed} images can be uploaded for a product`,
+      });
+    }
+    // Initialize images with an empty array
+    let images = [];
+
+    if (req.files && req.files.length > 0) {
+      images = req.files.map((file) => file.filename);
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { images },
+      { new: true }
+    );
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
