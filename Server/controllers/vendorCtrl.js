@@ -55,9 +55,13 @@ export const uploadProductImage = asyncHandler(async (req, res) => {
       images = req.files.map((file) => file.filename);
     }
 
-    const updateProduct = await Product.findByIdAndUpdate(id, { images });
-    await updateProduct.save();
-    res.status(200).json(updateProduct);
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $push: { images: { $each: images } } },
+      { new: true }
+    );
+
+    res.status(200).json(updatedProduct);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
