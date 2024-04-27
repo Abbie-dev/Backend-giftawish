@@ -6,14 +6,17 @@ import {
   updateProduct,
   allProductsByVendor,
   deleteProduct,
+  uploadProductImage,
 } from '../controllers/vendorCtrl.js';
 
 const router = express.Router();
-router.post(
-  '/addProduct',
+router.post('/addProduct', isVendorAuthenticated, addProduct);
+
+router.put(
+  '/uploadProductImages/:id',
   isVendorAuthenticated,
   productImageUpload,
-  addProduct
+  uploadProductImage
 );
 router.put(
   '/updateProduct/:id',
