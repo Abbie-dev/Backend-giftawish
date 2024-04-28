@@ -55,9 +55,15 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
 export const getProductById = asyncHandler(async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id)
+      .populate({ path: 'category', select: 'name -_id' })
+      .populate({ path: 'vendor', select: 'companyName -_id' })
+      .lean();
+
     if (product) {
-      res.json(product);
+      const availableQuantity = product.quantity - product.numberOfOrders;
+      const responseData = { ...product, availableQuantity };
+      res.json(responseData);
     } else {
       res.status(404).json({ message: 'Product not found' });
     }
