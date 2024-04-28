@@ -161,7 +161,10 @@ export const allProductsByVendor = asyncHandler(async (req, res) => {
     if (!vendor) {
       return res.status(404).json({ message: 'Vendor not found' });
     }
-    const products = await Product.find({ vendor });
+    const products = await Product.find({ vendor }).populate({
+      path: 'vendor',
+      select: 'companyName -_id',
+    });
     res.status(200).json(products);
   } catch (error) {
     console.error(error);

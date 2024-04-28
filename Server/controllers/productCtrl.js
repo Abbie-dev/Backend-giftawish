@@ -42,6 +42,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
         path: 'category',
         select: 'name -_id', // Specify the fields from the Category model that you want to populate
       })
+      .populate({ path: 'vendor', select: 'companyName -_id' })
       .limit(12)
       .sort({ createdAt: -1 });
 
@@ -52,4 +53,16 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   }
 });
 
-export const getProductById = asyncHandler(async (req, res) => {});
+export const getProductById = asyncHandler(async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
