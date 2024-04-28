@@ -56,8 +56,13 @@ const productSchema = new mongoose.Schema(
 );
 // Create a compound unique index on 'slug' and 'vendor'
 productSchema.index({ slug: 1, vendor: 1 }, { unique: true });
+
+productSchema.virtual('available-quantity').get(function () {
+  return this.quantity - this.numberOfOrders;
+});
 productSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true, strict: true });
+  this.inStock = this.available - quantity > 0;
   next();
 });
 const Product = mongoose.model('Product', productSchema);
