@@ -26,9 +26,15 @@ app.use('/api/auth', authRouter);
 app.use('/api/vendor', vendorRouter);
 app.use('/api/products', productsRouter);
 
+// Catch-all route handler for the root path
+app.get('/', (req, res) => {
+  res.send('Welcome to my API!');
+});
+
 //error handlers
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
+
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
