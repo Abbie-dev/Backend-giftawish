@@ -4,6 +4,8 @@ import Product from '../models/productModel.js';
 export const getTopProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find({})
+      .populate({ path: 'category', select: 'name -_id' })
+      .populate({ path: 'vendor', select: 'companyName -_id' })
       .sort({ numberOfOrders: -1 })
       .limit(3);
     res.json(products);
@@ -21,7 +23,11 @@ export const searchProducts = asyncHandler(async (req, res) => {
 });
 export const newProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.find({}).sort({ _id: -1 }).limit(10);
+    const products = await Product.find({})
+      .populate({ path: 'category', select: 'name -_id' })
+      .populate({ path: 'vendor', select: 'companyName -_id' })
+      .sort({ _id: -1 })
+      .limit(10);
     res.json(products);
   } catch (error) {
     console.error(error);
