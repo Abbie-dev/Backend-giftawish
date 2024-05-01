@@ -24,9 +24,26 @@ export const getTopProducts = asyncHandler(async (req, res) => {
 });
 export const searchProducts = asyncHandler(async (req, res) => {
   try {
+    const limit = parseInt(req.query.limit || 10);
+    const startIndex = parseInt(req.query.startIndex || 0);
+
+    const searchTerm = req.query.searchTerm || '';
+    const sort = req.query.sort || 'createdAt';
+    const order = req.query.order || 'desc';
+
+    const products = await Product.find({
+      name: { $regex: searchTerm, $options: 'i' },
+      category: { $regex: searchTerm, $options: 'i' },
+    })
+      .sort({
+        [sort]: order,
+      })
+      .limit(limit)
+      .skip(startIndex);
+    return res.status(200).json(products);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: error.message });
   }
 });
 export const newProducts = asyncHandler(async (req, res) => {
@@ -50,13 +67,7 @@ export const newProducts = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-export const filterProducts = asyncHandler(async (req, res) => {
-  try {
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
+
 export const getAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find({})
