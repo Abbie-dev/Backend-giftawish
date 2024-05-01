@@ -7,8 +7,16 @@ export const getTopProducts = asyncHandler(async (req, res) => {
       .populate({ path: 'category', select: 'name -_id' })
       .populate({ path: 'vendor', select: 'companyName -_id' })
       .sort({ numberOfOrders: -1 })
-      .limit(3);
-    res.json(products);
+      .limit(10)
+      .lean();
+
+    const updatedProducts = products.map((product) => {
+      const availableQuantity = product.quantity - product.numberOfOrders;
+      const instock = availableQuantity > 0;
+      const { inStock, ...rest } = product;
+      return { ...rest, availableQuantity, instock };
+    });
+    res.json(updatedProducts);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
@@ -27,11 +35,19 @@ export const newProducts = asyncHandler(async (req, res) => {
       .populate({ path: 'category', select: 'name -_id' })
       .populate({ path: 'vendor', select: 'companyName -_id' })
       .sort({ _id: -1 })
-      .limit(10);
-    res.json(products);
+      .limit(10)
+      .lean();
+
+    const updatedProducts = products.map((product) => {
+      const availableQuantity = product.quantity - product.numberOfOrders;
+      const instock = availableQuantity > 0;
+      const { inStock, ...rest } = product;
+      return { ...rest, availableQuantity, instock };
+    });
+    res.json(updatedProducts);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: error.message });
   }
 });
 export const filterProducts = asyncHandler(async (req, res) => {
