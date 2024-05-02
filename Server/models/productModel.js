@@ -58,7 +58,7 @@ const productSchema = new mongoose.Schema(
 productSchema.index({ slug: 1, vendor: 1 }, { unique: true });
 
 productSchema.set('toObject', { virtuals: true });
-productSchema.set('toJSON', { virtuals: true });
+productSchema.set('toJSON', { virtuals: false });
 
 productSchema.pre('findOne', function () {
   this.populate({ path: 'category', select: 'name -_id' }).populate({
