@@ -23,24 +23,75 @@ export const getTopProducts = asyncHandler(async (req, res) => {
   }
 });
 export const searchProducts = asyncHandler(async (req, res) => {
+  const {
+    q,
+    category,
+    minPrice,
+    maxPrice,
+    sortBy = 'createdAt',
+    order = 'desc',
+    page = 1,
+    limit = 10,
+  } = req.query;
+
   try {
-    const limit = parseInt(req.query.limit || 10);
-    const startIndex = parseInt(req.query.startIndex || 0);
+    const filters = {};
 
-    const searchTerm = req.query.searchTerm || '';
-    const sort = req.query.sort || 'createdAt';
-    const order = req.query.order || 'desc';
+    //filter by query
+    if (q) {
+      filters.$or = [
+        { name: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } },
+        { tags: { $in: [q] } },
+      ];
+    }
+    //filter by category
+    if (category) {
+      filters.category = category;
+    }
+    //filter by price range
 
-    const products = await Product.find({
-      name: { $regex: searchTerm, $options: 'i' },
-      category: { $regex: searchTerm, $options: 'i' },
-    })
-      .sort({
-        [sort]: order,
-      })
-      .limit(limit)
-      .skip(startIndex);
-    return res.status(200).json(products);
+    if (minPrice && maxPrice) {
+      filters.price = {
+        $gte: minPrice,
+        $lte: maxPrice,
+      };
+    } else if (minPrice) {
+      filters.price = {
+        $gte: minPrice,
+      };
+    } else if (maxPrice) {
+      filters.price = {
+        $lte: maxPrice,
+      };
+    }
+
+    //sorting options
+    const sortOptions = {};
+    if (sortBy === 'popularity') {
+      sortOptions.numberOfOrders = order === 'desc' ? -1 : 1;
+    } else if (sortBy === 'newest') {
+      sortOptions.createdAt = order === 'desc' ? -1 : 1;
+    } else if (sortBy === 'price') {
+      sortOptions.price = order === 'desc' ? -1 : 1;
+    } else {
+      sortOptions[sortBy] = order === 'desc' ? -1 : 1;
+    }
+
+    const skip = (page - 1) * limit;
+    const products = await Product.find(filters)
+      .populate({ path: 'category', select: 'name -_id' })
+      .populate({ path: 'vendor', select: 'companyName -_id' })
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit);
+    const totalProduct = await Product.countDocuments(filters);
+    res.json({
+      products,
+      totalProduct,
+      currentPage: page,
+      totalPages: Math.ceil(totalProduct / limit),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
