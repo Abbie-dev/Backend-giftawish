@@ -6,11 +6,12 @@ import { profileImageUpload } from '../config/multerConfig.js';
 export const getUserProfile = asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
+      .select('-password')
       .populate({
         path: 'friends.userId',
         select: 'username',
       })
-      .exec();
+      .populate({ path: 'wishlist', select: 'title description -_id' });
 
     if (!user) {
       res.status(404).json({

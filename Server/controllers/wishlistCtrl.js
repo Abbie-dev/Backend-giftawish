@@ -6,9 +6,13 @@ export const createWishlist = asyncHandler(async (req, res) => {
   try {
     const { title, description } = req.body;
     const user = req.user._id;
-    const wishlist = new Wishlist({ user, title, description });
+    const wishlist = new Wishlist({ user, title, description, items: [] });
 
     const createdWishlist = await wishlist.save();
+
+    await User.findByIdAndUpdate(user, {
+      $push: { wishlist: createdWishlist._id },
+    });
     res.status(200).json(createdWishlist);
   } catch (error) {
     console.log(error);

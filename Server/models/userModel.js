@@ -36,7 +36,8 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, default: false },
     profileImage: {
       type: String,
-      default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8RCNNiXstGEnqykUFUPSwQg1GQlZk2w0EUA&s',
+      default:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8RCNNiXstGEnqykUFUPSwQg1GQlZk2w0EUA&s',
       required: true,
     },
     password: {
@@ -56,8 +57,8 @@ const userSchema = new mongoose.Schema(
     ],
     wishlist: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Product',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Wishlist',
       },
     ],
     addresses: [
