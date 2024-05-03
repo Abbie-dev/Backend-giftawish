@@ -1,5 +1,4 @@
 import User from '../models/userModel.js';
-import Wishlist from '../models/wishlistModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import { profileImageUpload } from '../config/multerConfig.js';
@@ -52,7 +51,9 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 
       // Parse the birthday string into a Date object
       const birthdayString = req.body.birthday;
-      const birthday = birthdayString ? new Date(birthdayString) : user.birthday;
+      const birthday = birthdayString
+        ? new Date(birthdayString)
+        : user.birthday;
       // update the user profile with the new fields
 
       user.firstname = req.body.firstname || user.firstname;
@@ -142,7 +143,7 @@ export const getAvailableUsers = asyncHandler(async (req, res) => {
 
 export const sendFriendRequest = asyncHandler(async (req, res) => {
   try {
-    const senderUsername = req.user.username
+    const senderUsername = req.user.username;
     const { recipientUsername } = req.body;
     //find both users
 
@@ -391,8 +392,7 @@ export const unblockUser = asyncHandler(async (req, res) => {
 //get list of friends
 export const getFriendList = asyncHandler(async (req, res) => {
   try {
-
-    const username = req.user.username
+    const username = req.user.username;
 
     //find the user
 
@@ -421,7 +421,7 @@ export const getFriendList = asyncHandler(async (req, res) => {
 // get list of blocked users
 export const getBlockedUsers = asyncHandler(async (req, res) => {
   try {
-    const username = req.user.username
+    const username = req.user.username;
     //find the user
     const currentUser = await User.findOne({ username: username }).populate({
       path: 'blockedUsers.userId',
@@ -438,45 +438,3 @@ export const getBlockedUsers = asyncHandler(async (req, res) => {
     });
   }
 });
-//wishlist
-export const createWishlist = asyncHandler(async (req, res) => {
-  try {
-    const { title, description } = req.body;
-    const user = req.user._id;
-    const wishlist = new Wishlist({ user, title, description });
-
-    const createdWishlist = await wishlist.save();
-    res.status(200).json(createdWishlist);
-
-
-
-  } catch (error) {
-    console.log(error);
-    res.status.json({ error: error.message });
-  }
-})
-export const getMyWishlists = asyncHandler(async (req, res) => {
-  try {
-    const user = req.user._id;
-    const wishlists = await Wishlist.find({ user });
-    if (!wishlists) {
-      return res.status(404).json({ message: 'You dont have any wishlist' });
-    }
-    res.status(200).json(wishlists);
-
-  } catch (error) {
-    console.log(error);
-    res.status.json({ error: error.message });
-  }
-})
-export const addItemsToWishlist = asyncHandler(async (req, res) => {
-  try {
-
-  } catch (error) {
-    console.log(error);
-    res.status.json({ error: error.message });
-  }
-})
-
-export const removeItemFromWishlist = asyncHandler(async (req, res) => { });
-export const deleteWishlist = asyncHandler(async (req, res) => { });
