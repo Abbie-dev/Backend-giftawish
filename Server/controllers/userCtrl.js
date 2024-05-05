@@ -40,39 +40,48 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      res.status(404).json({
-        error: 'User not found',
-      });
-    } else {
-      //check if a profile image was uploaded
-
-      if (req.file) {
-        user.profileImage = req.file.filename;
-      }
-
-      // Parse the birthday string into a Date object
-      const birthdayString = req.body.birthday;
-      const birthday = birthdayString
-        ? new Date(birthdayString)
-        : user.birthday;
-      // update the user profile with the new fields
-
-      user.firstname = req.body.firstname || user.firstname;
-      user.lastname = req.body.lastname || user.lastname;
-      user.username = req.body.username || user.username;
-      user.email = req.body.email || user.email;
-      user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-      user.birthday = birthday;
-
-      await user.save();
-
-      res.status(200).json(user);
+      return res.status(404).json({ error: 'User not found' });
     }
+
+    // Check if the provided username already exists
+    const usernameExists = await User.findOne({
+      username: req.body.username,
+      _id: { $ne: user._id },
+    });
+    if (usernameExists && req.body.username) {
+      return res.status(400).json({ error: 'Username already taken' });
+    }
+
+    // Check if the provided phoneNumber already exists
+    const phoneNumberExists = await User.findOne({
+      phoneNumber: req.body.phoneNumber,
+      _id: { $ne: user._id },
+    });
+    if (phoneNumberExists && req.body.phoneNumber) {
+      return res.status(400).json({ error: 'Phone number already taken' });
+    }
+
+    //check if a profile image was uploaded
+    if (req.file) {
+      user.profileImage = req.file.filename;
+    }
+
+    // Parse the birthday string into a Date object
+    const birthdayString = req.body.birthday;
+    const birthday = birthdayString ? new Date(birthdayString) : user.birthday;
+
+    // update the user profile with the new fields
+    user.firstname = req.body.firstname || user.firstname;
+    user.lastname = req.body.lastname || user.lastname;
+    user.username = req.body.username || user.username;
+    user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+    user.birthday = birthday;
+
+    await user.save();
+    res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      error: error.message,
-    });
+    res.status(500).json({ error: error.message });
   }
 });
 

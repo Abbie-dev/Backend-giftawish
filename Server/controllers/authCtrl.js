@@ -13,7 +13,6 @@ import createToken from '../utils/createToken.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-
 //register user
 const registerUser = asynchandler(async (req, res) => {
   try {
@@ -24,15 +23,20 @@ const registerUser = asynchandler(async (req, res) => {
         message: 'User already exists',
       });
     } else {
-      const newUser = new User(req.body);
+      const newUser = new User({
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email,
+        password: req.body.password,
+      });
       const user = await newUser.save();
-
       // Send verification email
       const verificationCode = await sendVerificationEmail(email);
 
       return res.status(201).json({
         user,
-        message: 'User registered successfully. Please enter the verification code sent to your email.',
+        message:
+          'User registered successfully. Please enter the verification code sent to your email.',
         verificationCode,
       });
     }
@@ -62,7 +66,6 @@ const registervendor = asynchandler(async (req, res) => {
         message:
           'Vendor registered successfully. Please check your email to verify your account.',
       });
-
     }
   } catch (error) {
     console.log(error);
@@ -91,7 +94,6 @@ const verifyEmail = asynchandler(async (req, res) => {
     }
     //check if the verification code is correct
     const storedVerificationCode = otpCache.get(email);
-
 
     if (!storedVerificationCode || code !== storedVerificationCode) {
       return res.status(400).json({ message: 'Invalid verification code' });
@@ -135,10 +137,8 @@ const resendVerificationCode = asynchandler(async (req, res) => {
     otpCache.set(email, verificationCode);
     return res.status(201).json({
       verificationCode,
-      message:
-        ' Please check your email to verify your account.',
+      message: ' Please check your email to verify your account.',
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -379,5 +379,4 @@ export {
   forgotPasswordVendor,
   resetPasswordVendor,
   logout,
-
 };

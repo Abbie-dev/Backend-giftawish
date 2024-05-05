@@ -33,10 +33,17 @@ export const getMyWishlists = asyncHandler(async (req, res) => {
   }
 });
 
-export const getWishlistById = asyncHandler(async (req, res) => {});
+export const getWishlistById = asyncHandler(async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    res.status.json({ error: error.message });
+  }
+});
 export const addItemsToWishlist = asyncHandler(async (req, res) => {
   try {
-    const user = req.user._id;
+    const wishlistId = req.params;
+    const { productIds, categoryIds, priority } = req.body;
   } catch (error) {
     console.log(error);
     res.status.json({ error: error.message });

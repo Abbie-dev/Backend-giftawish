@@ -14,8 +14,6 @@ const userSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      required: [true, 'username required'],
-      unique: true,
       lowercase: true,
     },
     email: {
@@ -30,7 +28,6 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      unique: true,
     },
     birthday: { type: Date },
     isAdmin: { type: Boolean, default: false },
