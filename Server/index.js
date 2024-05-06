@@ -30,7 +30,9 @@ app.use('/api/user', wishlistRouter);
 
 // Catch-all route handler for the root path
 app.get('/', (req, res) => {
-  res.send('Welcome to my API!');
+  res.send(
+    `Welcome to my API!, click here to see the <a href= https://app.swaggerhub.com/apis-docs/NANAHICE2015_1/GiftAWish/1.0>API documentation </a>`
+  );
 });
 
 //error handlers
