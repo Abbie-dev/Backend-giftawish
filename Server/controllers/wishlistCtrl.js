@@ -74,14 +74,48 @@ export const getWishlistById = asyncHandler(async (req, res) => {
   }
 });
 export const addItemsToWishlist = asyncHandler(async (req, res) => {
+  const { wishlistId, productId } = req.body;
+  const user = req.user._id;
+
   try {
+    const wishlist = await Wishlist.findOneAndUpdate(
+      { _id: wishlistId, user },
+      { $push: { items: { product: productId } } },
+      { new: true }
+    );
+
+    if (!wishlist) {
+      return res.status(404).json({ error: 'Wishlist not found' });
+    }
+
+    res.status(200).json(wishlist);
   } catch (error) {
     console.log(error);
-    res.status.json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
-export const removeItemFromWishlist = asyncHandler(async (req, res) => {});
+export const removeItemFromWishlist = asyncHandler(async (req, res) => {
+  const { wishlistId, productId } = req.body;
+  const user = req.user._id;
+
+  try {
+    const wishlist = await Wishlist.findOneAndUpdate(
+      { _id: wishlistId, user },
+      { $pull: { items: { product: productId } } },
+      { new: true }
+    );
+
+    if (!wishlist) {
+      return res.status(404).json({ error: 'Wishlist not found' });
+    }
+
+    res.status(200).json(wishlist);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 export const deleteWishlist = asyncHandler(async (req, res) => {
   const wishlistId = req.params.wishlistId;
   const user = req.user._id;
@@ -93,5 +127,25 @@ export const deleteWishlist = asyncHandler(async (req, res) => {
       $pull: { wishlist: wishlistId },
     });
     res.status(200).json({ message: 'Wishlist deleted' });
+  }
+});
+
+// GET /share-wishlist
+export const viewSharedWishlist = asyncHandler(async (req, res) => {
+  try {
+    const { wishlistId, userId } = req.query;
+
+    const wishlist = await Wishlist.findOne({
+      _id: wishlistId,
+      user: userId,
+    }).populate('items.product', 'name price images');
+
+    if (!wishlist) {
+      return res.status(404).json({ error: 'Wishlist not found' });
+    }
+
+    res.json(wishlist);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });

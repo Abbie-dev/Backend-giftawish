@@ -7,6 +7,7 @@ import {
   removeItemFromWishlist,
   deleteWishlist,
   getWishlistById,
+  viewSharedWishlist,
 } from '../controllers/wishlistCtrl.js';
 
 const router = express.Router();
@@ -31,5 +32,7 @@ router.delete(
   isAuthenticated,
   deleteWishlist
 );
+
+router.get('/sharedWishlists/:wishlistId', viewSharedWishlist);
 
 export default router;
