@@ -33,6 +33,6 @@ router.delete(
   deleteWishlist
 );
 
-router.get('/sharedWishlists/:wishlistId', viewSharedWishlist);
+router.get('/sharedWishlists/:token', viewSharedWishlist);
 
 export default router;

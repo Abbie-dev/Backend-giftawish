@@ -137,7 +137,11 @@ export const deleteWishlist = asyncHandler(async (req, res) => {
 
 export const viewSharedWishlist = asyncHandler(async (req, res) => {
   try {
-    const { wishlistId, userId } = req.query;
+    const { token } = req.params;
+    //verify and decode the jwt token
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { wishlistId, userId } = decoded;
 
     const wishlist = await Wishlist.findOne({
       _id: wishlistId,
