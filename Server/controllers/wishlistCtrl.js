@@ -1,6 +1,7 @@
 import User from '../models/userModel.js';
 import Wishlist from '../models/wishlistModel.js';
 import asyncHandler from 'express-async-handler';
+import jwt from 'jsonwebtoken';
 
 export const createWishlist = asyncHandler(async (req, res) => {
   try {
@@ -34,7 +35,7 @@ export const createWishlist = asyncHandler(async (req, res) => {
 export const getMyWishlists = asyncHandler(async (req, res) => {
   try {
     const user = req.user._id;
-    const wishlists = await Wishlist.find({ user });
+    const wishlists = await Wishlist.find({ user }).sort({ eventDate: 1 });
     if (!wishlists) {
       return res.status(404).json({ message: 'You dont have any wishlist' });
     }
@@ -47,6 +48,26 @@ export const getMyWishlists = asyncHandler(async (req, res) => {
 
 export const getWishlistById = asyncHandler(async (req, res) => {
   try {
+    const wishlistId = req.params.wishlistId;
+    const user = req.user._id;
+    const wishlist = await Wishlist.findById({ user, wishlistId }).populate({
+      path: 'items.product',
+      select: 'name price images',
+    });
+    if (!wishlist) {
+      return res.status(404).json({ message: 'Wishlist not found' });
+    }
+
+    const token = jwt.sign(
+      { wishlistId: wishlist._id, user: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+    const shareLink = `${req.protocol}://${req.get(
+      'host'
+    )}/share-wishlist/${token}`;
+
+    res.status(200).json({ wishlist, shareLink });
   } catch (error) {
     console.log(error);
     res.status.json({ error: error.message });
@@ -54,8 +75,6 @@ export const getWishlistById = asyncHandler(async (req, res) => {
 });
 export const addItemsToWishlist = asyncHandler(async (req, res) => {
   try {
-    const wishlistId = req.params;
-    const { productIds, categoryIds, priority } = req.body;
   } catch (error) {
     console.log(error);
     res.status.json({ error: error.message });
