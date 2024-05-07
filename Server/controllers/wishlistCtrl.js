@@ -74,7 +74,8 @@ export const getWishlistById = asyncHandler(async (req, res) => {
   }
 });
 export const addItemsToWishlist = asyncHandler(async (req, res) => {
-  const { wishlistId, productId } = req.body;
+  const { productId } = req.body;
+  const wishlistId = req.params.wishlistId;
   const user = req.user._id;
 
   try {
@@ -96,7 +97,8 @@ export const addItemsToWishlist = asyncHandler(async (req, res) => {
 });
 
 export const removeItemFromWishlist = asyncHandler(async (req, res) => {
-  const { wishlistId, productId } = req.body;
+  const { productId } = req.body;
+  const wishlistId = req.params.wishlistId;
   const user = req.user._id;
 
   try {
@@ -130,7 +132,6 @@ export const deleteWishlist = asyncHandler(async (req, res) => {
   }
 });
 
-// GET /share-wishlist
 export const viewSharedWishlist = asyncHandler(async (req, res) => {
   try {
     const { wishlistId, userId } = req.query;
