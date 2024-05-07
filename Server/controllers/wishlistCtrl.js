@@ -50,7 +50,10 @@ export const getWishlistById = asyncHandler(async (req, res) => {
   try {
     const wishlistId = req.params.wishlistId;
     const user = req.user._id;
-    const wishlist = await Wishlist.findById({ wishlistId, user }).populate({
+    const wishlist = await Wishlist.findById({
+      _id: wishlistId,
+      user,
+    }).populate({
       path: 'items.product',
       select: 'name price images',
     });
