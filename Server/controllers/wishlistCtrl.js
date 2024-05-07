@@ -68,7 +68,7 @@ export const getWishlistById = asyncHandler(async (req, res) => {
     );
     const shareLink = `${req.protocol}://${req.get(
       'host'
-    )}/share-wishlist/${token}`;
+    )}/api/user/share-wishlist/${token}`;
 
     res.status(200).json({ wishlist, shareLink });
   } catch (error) {
