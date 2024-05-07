@@ -70,7 +70,7 @@ export const getWishlistById = asyncHandler(async (req, res) => {
     res.status(200).json({ wishlist, shareLink });
   } catch (error) {
     console.log(error);
-    res.status.json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 export const addItemsToWishlist = asyncHandler(async (req, res) => {
