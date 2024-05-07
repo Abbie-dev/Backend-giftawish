@@ -4,9 +4,21 @@ import asyncHandler from 'express-async-handler';
 
 export const createWishlist = asyncHandler(async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, eventDate } = req.body;
     const user = req.user._id;
-    const wishlist = new Wishlist({ user, title, description, items: [] });
+
+    // Validate that eventDate is provided and is a valid date
+    if (!eventDate || isNaN(Date.parse(eventDate))) {
+      return res.status(400).json({ error: 'Invalid event date' });
+    }
+
+    const wishlist = new Wishlist({
+      user,
+      title,
+      description,
+      eventDate: new Date(eventDate),
+      items: [],
+    });
 
     const createdWishlist = await wishlist.save();
 
