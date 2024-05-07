@@ -26,6 +26,10 @@ router.delete(
   isAuthenticated,
   removeItemFromWishlist
 );
-router.delete('/wishlists/:wishlistId', isAuthenticated, deleteWishlist);
+router.delete(
+  '/wishlists/:wishlistId/deleteWishlist',
+  isAuthenticated,
+  deleteWishlist
+);
 
 export default router;

@@ -51,4 +51,16 @@ export const addItemsToWishlist = asyncHandler(async (req, res) => {
 });
 
 export const removeItemFromWishlist = asyncHandler(async (req, res) => {});
-export const deleteWishlist = asyncHandler(async (req, res) => {});
+export const deleteWishlist = asyncHandler(async (req, res) => {
+  const wishlistId = req.params;
+  const user = req.user._id;
+  const wishlistToDelete = await Wishlist.findByIdAndDelete(wishlistId);
+  if (!wishlistToDelete) {
+    return res.status(404).json({ message: 'Wishlist not found' });
+  } else {
+    await User.findByIdAndUpdate(user, {
+      $pull: { wishlist: wishlistId },
+    });
+    res.status(200).json({ message: 'Wishlist deleted' });
+  }
+});
