@@ -52,7 +52,7 @@ export const addItemsToWishlist = asyncHandler(async (req, res) => {
 
 export const removeItemFromWishlist = asyncHandler(async (req, res) => {});
 export const deleteWishlist = asyncHandler(async (req, res) => {
-  const wishlistId = req.params;
+  const wishlistId = req.params.wishlistId;
   const user = req.user._id;
   const wishlistToDelete = await Wishlist.findByIdAndDelete(wishlistId);
   if (!wishlistToDelete) {
