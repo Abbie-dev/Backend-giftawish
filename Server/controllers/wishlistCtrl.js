@@ -141,11 +141,11 @@ export const viewSharedWishlist = asyncHandler(async (req, res) => {
     //verify and decode the jwt token
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { wishlistId, userId } = decoded;
+    const { wishlistId, user } = decoded;
 
     const wishlist = await Wishlist.findOne({
       _id: wishlistId,
-      user: userId,
+      user,
     }).populate('items.product', 'name price images');
 
     if (!wishlist) {
