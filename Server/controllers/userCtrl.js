@@ -2,6 +2,7 @@ import User from '../models/userModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import { profileImageUpload } from '../config/multerConfig.js';
+import Address from '../models/addressModel.js';
 
 export const getUserProfile = asyncHandler(async (req, res) => {
   try {
@@ -11,7 +12,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         path: 'friends.userId',
         select: 'username',
       })
-      .populate({ path: 'wishlist', select: 'title description -_id' });
+      .populate({ path: 'wishlist', select: 'title description -_id' })
+      .populate('address -_id');
 
     if (!user) {
       res.status(404).json({
@@ -61,6 +63,16 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       return res.status(400).json({ error: 'Phone number already taken' });
     }
 
+    //create a new address document
+
+    const addressData = {
+      street: req.body.street,
+      city: req.body.city,
+      state: req.body.state,
+      postalCode: req.body.postalCode,
+      country: req.body.country,
+    };
+    const newAddress = await Address.create(addressData);
     //check if a profile image was uploaded
     if (req.file) {
       user.profileImage = req.file.filename;
@@ -74,8 +86,8 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.firstname = req.body.firstname || user.firstname;
     user.lastname = req.body.lastname || user.lastname;
     user.username = req.body.username || user.username;
-    user.country = req.body.country || user.country;
     user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+    user.address.push(newAddress._id);
     user.birthday = birthday;
 
     await user.save();
