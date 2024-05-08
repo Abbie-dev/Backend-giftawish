@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
     },
+
+    country: {
+      type: String,
+    },
+
     email: {
       type: String,
       required: [true, 'email required'],

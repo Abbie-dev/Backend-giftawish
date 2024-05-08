@@ -74,6 +74,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.firstname = req.body.firstname || user.firstname;
     user.lastname = req.body.lastname || user.lastname;
     user.username = req.body.username || user.username;
+    user.country = req.body.country || user.country;
     user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
     user.birthday = birthday;
 
