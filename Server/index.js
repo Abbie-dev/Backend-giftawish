@@ -9,6 +9,7 @@ import adminRouter from './routes/adminRoutes.js';
 import vendorRouter from './routes/vendorRoutes.js';
 import productsRouter from './routes/productRoutes.js';
 import wishlistRouter from './routes/wishlistRoute.js';
+import orderRouter from './routes/userRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorHandlers.js';
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/vendor', vendorRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/user', wishlistRouter);
+app.use('/api/user', orderRouter);
 
 // Catch-all route handler for the root path
 app.get('/', (req, res) => {
