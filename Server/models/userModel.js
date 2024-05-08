@@ -58,15 +58,7 @@ const userSchema = new mongoose.Schema(
         ref: 'Wishlist',
       },
     ],
-    addresses: [
-      {
-        id: { type: mongoose.Schema.Types.ObjectId },
-        details: String,
-        city: String,
-        state: String,
-        postalCode: String,
-      },
-    ],
+
     blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true }
