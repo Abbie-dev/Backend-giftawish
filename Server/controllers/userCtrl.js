@@ -87,7 +87,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.lastname = req.body.lastname || user.lastname;
     user.username = req.body.username || user.username;
     user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-    user.address.push(newAddress._id);
+    user.address = newAddress._id;
     user.birthday = birthday;
 
     await user.save();
