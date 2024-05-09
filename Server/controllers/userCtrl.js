@@ -63,12 +63,19 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       return res.status(400).json({ error: 'Phone number already taken' });
     }
 
+    //create a new address document
     // Check if the provided address exists
     let address = await Address.findById(user.address);
 
     if (!address) {
       // Create a new address document
-      const addressData = req.body.address;
+      const addressData = {
+        street: req.body.street,
+        city: req.body.city,
+        state: req.body.state,
+        postalCode: req.body.postalCode,
+        country: req.body.country,
+      };
       address = await Address.create(addressData);
     } else {
       // Update the existing address
