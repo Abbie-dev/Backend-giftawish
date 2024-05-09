@@ -13,7 +13,10 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         select: 'username',
       })
       .populate({ path: 'wishlist', select: 'title description -_id' })
-      .populate({ path: 'address', select: '-_id' });
+      .populate({
+        path: 'address',
+        select: '-_id street city country state postalCode',
+      });
 
     if (!user) {
       res.status(404).json({
@@ -70,6 +73,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     if (!address) {
       // Create a new address document
       const addressData = {
+        user: req.user._id,
         street: req.body.street,
         city: req.body.city,
         state: req.body.state,
@@ -107,7 +111,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.birthday = birthday;
 
     await user.save();
-    res.status(200).json(user).populate('address');
+    res.status(200).json(user);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
