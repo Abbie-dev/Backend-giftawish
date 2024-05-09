@@ -13,7 +13,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         select: 'username',
       })
       .populate({ path: 'wishlist', select: 'title description -_id' })
-      .populate('address -_id');
+      .populate({ path: 'address', select: '-_id' });
 
     if (!user) {
       res.status(404).json({
@@ -107,7 +107,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.birthday = birthday;
 
     await user.save();
-    res.status(200).json(user);
+    res.status(200).json(user).populate('address');
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
