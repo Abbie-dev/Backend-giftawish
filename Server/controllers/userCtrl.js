@@ -64,15 +64,17 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     }
 
     //create a new address document
-
-    const addressData = {
-      street: req.body.street,
-      city: req.body.city,
-      state: req.body.state,
-      postalCode: req.body.postalCode,
-      country: req.body.country,
-    };
-    const newAddress = await Address.create(addressData);
+    let newAddress = null;
+    if (req.body.address) {
+      const addressData = {
+        street: req.body.street,
+        city: req.body.city,
+        state: req.body.state,
+        postalCode: req.body.postalCode,
+        country: req.body.country,
+      };
+      newAddress = await Address.create(addressData);
+    }
     //check if a profile image was uploaded
     if (req.file) {
       user.profileImage = req.file.filename;
@@ -87,7 +89,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.lastname = req.body.lastname || user.lastname;
     user.username = req.body.username || user.username;
     user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-    user.address = newAddress._id;
+    user.address = newAddress ? newAddress._id : user.address;
     user.birthday = birthday;
 
     await user.save();

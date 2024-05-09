@@ -5,19 +5,19 @@ const dbConnect = async () => {
   try {
     await mongoose.connect(process.env.MONGO);
     console.log('Database connected');
-    await updateUsersAddresses();
+    await removeAddressesField();
   } catch (error) {
     console.error('Error connecting to the database:', error);
   }
 };
-
-const updateUsersAddresses = async () => {
+const removeAddressesField = async () => {
   try {
-    const users = await User.find({});
-    for (const user of users) {
-      await User.updateOne({ _id: user._id }, { $unset: { addresses: 1 } });
-    }
-    console.log('Users updated successfully');
+    const result = await User.updateMany(
+      {},
+      { $unset: { addresses: [] } },
+      { multi: true }
+    );
+    console.log(`${result.modifiedCount} user documents updated successfully.`);
   } catch (error) {
     console.error('Error updating users:', error);
   }
