@@ -64,8 +64,11 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     }
 
     //create a new address document
-    let newAddress = null;
-    if (req.body.address) {
+    // Check if the provided address exists
+    let address = await Address.findById(user.address);
+
+    if (!address) {
+      // Create a new address document
       const addressData = {
         street: req.body.street,
         city: req.body.city,
@@ -73,8 +76,20 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
         postalCode: req.body.postalCode,
         country: req.body.country,
       };
-      newAddress = await Address.create(addressData);
+      address = await Address.create(addressData);
+    } else {
+      // Update the existing address
+      address.street = req.body.street || address.street;
+      address.city = req.body.city || address.city;
+      address.state = req.body.state || address.state;
+      address.postalCode = req.body.postalCode || address.postalCode;
+      address.country = req.body.country || address.country;
+      await address.save();
     }
+
+    // Associate the address with the user
+    user.address = address._id;
+
     //check if a profile image was uploaded
     if (req.file) {
       user.profileImage = req.file.filename;
@@ -89,7 +104,6 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     user.lastname = req.body.lastname || user.lastname;
     user.username = req.body.username || user.username;
     user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
-    user.address = newAddress ? newAddress._id : user.address;
     user.birthday = birthday;
 
     await user.save();
