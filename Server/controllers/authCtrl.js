@@ -324,6 +324,26 @@ const resetPassword = asynchandler(async (req, res) => {
   }
 });
 
+//change password
+
+const changePassword = asynchandler(async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const password = req.user.password;
+
+    if (currentPassword !== password) {
+      return res.status(400).json({ message: 'Invalid current password' });
+    }
+    const hashedpassword = await bcrypt.hash(newPassword, 12);
+    const user = await User.findByIdAndUpdate(req.user._id, {
+      password: hashedpassword,
+    });
+    return res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
 //forgot password vendor
 const forgotPasswordVendor = asynchandler(async (req, res) => {
   try {
@@ -402,6 +422,7 @@ export {
   adminLogin,
   signInWithGoogle,
   forgotPassword,
+  changePassword,
   resetPassword,
   forgotPasswordVendor,
   resetPasswordVendor,

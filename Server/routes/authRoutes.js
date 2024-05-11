@@ -8,6 +8,7 @@ import {
   adminLogin,
   signInWithGoogle,
   forgotPassword,
+  changePassword,
   resetPassword,
   registervendor,
   forgotPasswordVendor,
@@ -15,6 +16,10 @@ import {
   logout,
 } from '../controllers/authCtrl.js';
 import isVerifiedAccount from '../middlewares/accountIsVerified.js';
+import {
+  isAuthenticated,
+  isVendorAuthenticated,
+} from '../middlewares/authorization.js';
 
 const router = express.Router();
 
@@ -27,6 +32,12 @@ router.post('/admin/login', adminLogin);
 router.post('/google-signin', signInWithGoogle);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
+router.post(
+  '/change-password',
+  isAuthenticated,
+  isVendorAuthenticated,
+  changePassword
+);
 router.post('/forgot-password-vendor', forgotPasswordVendor);
 router.post('/reset-password-vendor/:token', resetPasswordVendor);
 router.get('/logout', logout);
