@@ -329,16 +329,21 @@ const resetPassword = asynchandler(async (req, res) => {
 const changePassword = asynchandler(async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    const password = req.user.password;
+    const user = await User.findById(req.user._id);
 
-    if (currentPassword !== password) {
+    //check if currentPassword matches with thw user's password
+
+    const isPasswordMatched = await user.isPasswordMatched(currentPassword);
+    if (!isPasswordMatched) {
       return res.status(400).json({ message: 'Invalid current password' });
     }
     const hashedpassword = await bcrypt.hash(newPassword, 12);
-    const user = await User.findByIdAndUpdate(req.user._id, {
-      password: hashedpassword,
-    });
-    return res.status(200).json(user);
+
+    user.password = hashedpassword;
+    await user.save();
+    return res
+      .status(200)
+      .json({ user, message: 'password changed successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
