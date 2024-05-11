@@ -273,10 +273,16 @@ const forgotPassword = asynchandler(async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: 'user does not exist' });
     } else {
-      const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: '1h',
-      });
-      const resetPasswordLink = `http://localhost:5000/api/auth/reset-password/${resetToken}`;
+      const resetToken = jwt.sign(
+        { user: req.user._id },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: '1h',
+        }
+      );
+      const resetPasswordLink = `${req.protocol}://${req.get(
+        'host'
+      )}/api/auth/reset-password/${resetToken}`;
       //send email to reset password
       const message = `<p>Click <a href="${resetPasswordLink}">here</a> reset your password.</p>`;
       await sendEmail({
@@ -284,7 +290,10 @@ const forgotPassword = asynchandler(async (req, res) => {
         subject: 'Reset Your Password',
         message,
       });
-      return res.status(200).json('success');
+      return res.status(200).json({
+        message: 'check your email to reset your password',
+        resetPasswordLink,
+      });
     }
   } catch (error) {
     console.log(error);
@@ -298,17 +307,17 @@ const resetPassword = asynchandler(async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
+    const { user } = decoded;
     console.log(decoded);
     const hashedpassword = await bcrypt.hash(password, 12);
 
-    const user = await User.findByIdAndUpdate(userId, {
+    const findUser = await User.findByIdAndUpdate(user, {
       password: hashedpassword,
     });
-    if (!user) {
+    if (!findUser) {
       return res.status(400).json({ message: 'Invalid reset code' });
     } else {
-      await user.save();
+      await findUser.save();
       //send success email
       const email = user.email;
       const message = `<p>Your password has been reset. Please log in</p>`;
@@ -331,19 +340,18 @@ const changePassword = asynchandler(async (req, res) => {
     const { currentPassword, newPassword } = req.body;
     const user = await User.findById(req.user._id);
 
-    //check if currentPassword matches with thw user's password
-
+    // Check if the current password is correct
     const isPasswordMatched = await user.isPasswordMatched(currentPassword);
     if (!isPasswordMatched) {
       return res.status(400).json({ message: 'Invalid current password' });
     }
 
+    // Update the password
     user.password = newPassword;
-    await user.hashedpassword();
+    await user.hashPassword(); // Hash the new password
     await user.save();
-    return res
-      .status(200)
-      .json({ user, message: 'password changed successfully' });
+
+    res.status(200).json({ message: 'Password changed successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

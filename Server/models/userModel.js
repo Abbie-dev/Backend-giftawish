@@ -71,7 +71,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 userSchema.methods.hashPassword = async function () {
   if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
