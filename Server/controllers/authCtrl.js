@@ -337,13 +337,37 @@ const changePassword = asynchandler(async (req, res) => {
     if (!isPasswordMatched) {
       return res.status(400).json({ message: 'Invalid current password' });
     }
-    const hashedpassword = await bcrypt.hash(newPassword, 12);
 
-    user.password = hashedpassword;
+    user.password = newPassword;
+    await user.hashedpassword();
     await user.save();
     return res
       .status(200)
       .json({ user, message: 'password changed successfully' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const changePasswordVendor = asynchandler(async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const vendor = await Vendor.findById(req.vendor._id);
+
+    //check if currentPassword matches with thw user's password
+
+    const isPasswordMatched = await vendor.isPasswordMatched(currentPassword);
+    if (!isPasswordMatched) {
+      return res.status(400).json({ message: 'Invalid current password' });
+    }
+    const hashedpassword = await bcrypt.hash(newPassword, 12);
+
+    vendor.password = hashedpassword;
+    await vendor.save();
+    return res
+      .status(200)
+      .json({ vendor, message: 'password changed successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -428,6 +452,7 @@ export {
   signInWithGoogle,
   forgotPassword,
   changePassword,
+  changePasswordVendor,
   resetPassword,
   forgotPasswordVendor,
   resetPasswordVendor,
