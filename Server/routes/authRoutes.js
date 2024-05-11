@@ -34,7 +34,11 @@ router.post('/google-signin', signInWithGoogle);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 router.post('/change-password', isAuthenticated, changePassword);
-router.post('/vendor/change-password', changePasswordVendor);
+router.post(
+  '/vendor/change-password',
+  isVendorAuthenticated,
+  changePasswordVendor
+);
 router.post('/forgot-password-vendor', forgotPasswordVendor);
 router.post('/reset-password-vendor/:token', resetPasswordVendor);
 router.get('/logout', logout);

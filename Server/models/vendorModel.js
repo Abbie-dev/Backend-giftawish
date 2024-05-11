@@ -36,9 +36,14 @@ const vendorSchema = new mongoose.Schema(
 );
 
 vendorSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  // Hashing user password
-  this.password = await bcrypt.hash(this.password, 12);
+  if (!this.isModified('password') || this.isNew)
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(this.password, salt);
+      this.password = hashedPassword;
+    } catch (err) {
+      next(err);
+    }
   next();
 });
 
