@@ -71,13 +71,16 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-userSchema.methods.hashPassword = async function () {
-  if (!this.isModified('password')) return;
-  this.password = await bcrypt.hash(this.password, 12);
-};
-
 userSchema.pre('save', async function (next) {
-  await this.hashPassword();
+  if (this.isModified('password') || this.isNew) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(this.password, salt);
+      this.password = hashedPassword;
+    } catch (err) {
+      next(err);
+    }
+  }
   next();
 });
 

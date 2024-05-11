@@ -161,7 +161,10 @@ const login = asynchandler(async (req, res) => {
       userOrVendor = user;
     } else if (vendor) {
       passwordMatch = await vendor.isPasswordMatched(password);
+      s;
       userOrVendor = vendor;
+    } else {
+      return res.status(400).json({ message: 'Invalid email or password' });
     }
 
     if (!passwordMatch) {
@@ -190,7 +193,7 @@ const adminLogin = asynchandler(async (req, res) => {
 
     const user = await User.findOne({ email });
     //if there is no user or password is incorrect or user is not an admin
-    if (!user || !user.isPasswordMatched(password) || !user.isAdmin) {
+    if (!user || !(await user.isPasswordMatched(password)) || !user.isAdmin) {
       res.status(401);
       throw new Error('Invalid email or password');
     }
@@ -273,13 +276,9 @@ const forgotPassword = asynchandler(async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: 'user does not exist' });
     } else {
-      const resetToken = jwt.sign(
-        { user: req.user._id },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: '1h',
-        }
-      );
+      const resetToken = jwt.sign({ user: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
       const resetPasswordLink = `${req.protocol}://${req.get(
         'host'
       )}/api/auth/reset-password/${resetToken}`;
@@ -348,7 +347,7 @@ const changePassword = asynchandler(async (req, res) => {
 
     // Update the password
     user.password = newPassword;
-    await user.hashPassword(); // Hash the new password
+    user.markModified('password'); // Mark the password field as modified
     await user.save();
 
     res.status(200).json({ message: 'Password changed successfully' });
