@@ -307,7 +307,7 @@ const resetPassword = asynchandler(async (req, res) => {
     const { password } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const { user } = decoded;
-    const hashedpassword = await bcrypt.hash(password, 12);
+    const hashedpassword = await bcrypt.hash(password, 10);
 
     const findUser = await User.findByIdAndUpdate(user, {
       password: hashedpassword,
@@ -418,19 +418,19 @@ const resetPasswordVendor = asynchandler(async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const vendor = decoded;
-    const hashedpassword = await bcrypt.hash(password, 12);
+    const vendorId = decoded.vendor;
+    const hashedpassword = await bcrypt.hash(password, 10);
     const findVendor = await Vendor.findByIdAndUpdate(
-      vendor,
-      { password: hashedpassword } // Update the password field
+      vendorId,
+      { password: hashedpassword },
+      { new: true }
     );
 
     if (!findVendor) {
       return res.status(400).json({ message: 'Invalid reset code' });
     } else {
-      await findVendor.save();
       //send sucess email
-      const email = vendor.email;
+      const email = findVendor.email;
       const message = `<p>Your password has been reset. Please log in</p>`;
       await sendEmail({
         email: email,

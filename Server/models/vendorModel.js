@@ -36,7 +36,7 @@ const vendorSchema = new mongoose.Schema(
 );
 
 vendorSchema.pre('save', async function (next) {
-  if (!this.isModified('password') || this.isNew)
+  if (this.isModified('password') || this.isNew)
     try {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(this.password, salt);
