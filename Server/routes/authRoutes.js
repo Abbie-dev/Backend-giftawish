@@ -5,6 +5,7 @@ import {
   verifyEmail,
   resendVerificationCode,
   login,
+  adminLogin,
   signInWithGoogle,
   forgotPassword,
   resetPassword,
@@ -22,6 +23,7 @@ router.post('/register/vendor', registervendor);
 router.post('/verify-email', verifyEmail);
 router.post('/verify-email/resendCode', resendVerificationCode);
 router.post('/login', isVerifiedAccount, login);
+router.post('/admin/login', adminLogin);
 router.post('/google-signin', signInWithGoogle);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);

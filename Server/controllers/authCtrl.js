@@ -182,6 +182,33 @@ const login = asynchandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+//admin login
+const adminLogin = asynchandler(async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    //find the user by email
+
+    const user = await User.findOne({ email });
+    //if there is no user or password is incorrect or user is not an admin
+    if (!user || !user.isPasswordMatched(password) || !user.isAdmin) {
+      res.status(401);
+      throw new Error('Invalid email or password');
+    }
+    //generate token
+
+    const token = createToken(user._id);
+    //store in cookies
+    res.cookie('accessToken', token, {
+      httpOnly: true,
+    });
+    //delete password from response
+    delete user._doc.password;
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 //signin with google account
 const signInWithGoogle = asynchandler(async (req, res) => {
@@ -372,6 +399,7 @@ export {
   verifyEmail,
   resendVerificationCode,
   login,
+  adminLogin,
   signInWithGoogle,
   forgotPassword,
   resetPassword,
