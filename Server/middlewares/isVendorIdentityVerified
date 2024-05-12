@@ -1,8 +1,22 @@
-import Vendor from '../models/vendorModel.js';
-
 export const isVendorSetupComplete = async (req, res, next) => {
   try {
     const vendor = req.vendor._id;
-  } catch (error) {}
-  next();
+    const profileSetupComplete =
+      vendor.firstName &&
+      vendor.lastName &&
+      vendor.shippingLocation &&
+      vendor.BankDetails;
+
+    const hasIdentificationDocument = vendor.identificationDocument;
+
+    if (!profileSetupComplete || !hasIdentificationDocument) {
+      return res.status(403).json({
+        message:
+          'Please complete your account setup and upload the required documents before adding products.',
+      });
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
 };

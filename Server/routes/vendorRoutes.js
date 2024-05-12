@@ -1,7 +1,7 @@
 import express from 'express';
 import { productImageUpload } from '../config/multerConfig.js';
 import { isVendorAuthenticated } from '../middlewares/authorization.js';
-import { isVendorSetupComplete } from '../middlewares/isVendorIdentityVerified.js';
+import { isVendorSetupComplete } from '../middlewares/isVendorIdentityVerified';
 import {
   addProduct,
   updateProduct,

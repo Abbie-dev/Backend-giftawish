@@ -37,18 +37,6 @@ const productImageStorage = new multerCloudinary.CloudinaryStorage({
   },
 });
 
-const vendorDocumentStorage = new multerCloudinary.CloudinaryStorage({
-  cloudinay: cloudinaryConfig.v2,
-  params: {
-    folder: `vendorDocument/${id}`,
-    format: async (req, file) => {
-      if (isJpegOrPng(file)) {
-        return null;
-      }
-      throw new Error('Invalid file format. Only JPEG and PNG are supported');
-    },
-  },
-});
 //multer configuration for profile image upload
 export const profileImageUpload = multer({
   storage: profileImageStorage,
@@ -60,9 +48,3 @@ export const productImageUpload = multer({
   storage: productImageStorage,
   limits: { fileSize: 1024 * 1024 },
 }).array('images', 6);
-
-// vendor document upload
-export const vendorDocument = multer({
-  storage: vendorDocumentStorage,
-  limits: { fileSize: 1024 * 1024 },
-}).single('identificationDocument');
