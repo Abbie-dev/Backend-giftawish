@@ -1,0 +1,7 @@
+import Vendor from '../models/vendorModel.js';
+
+export const isVendorSetupComplete = async (req, res, next) => {
+  try {
+  } catch (error) {}
+  next();
+};
