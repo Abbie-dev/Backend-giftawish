@@ -40,7 +40,7 @@ const productImageStorage = new multerCloudinary.CloudinaryStorage({
 const vendorDocumentStorage = new multerCloudinary.CloudinaryStorage({
   cloudinay: cloudinaryConfig.v2,
   params: {
-    folder: 'vendorDocument',
+    folder: `vendorDocument/${id}`,
     format: async (req, file) => {
       if (isJpegOrPng(file)) {
         return null;
@@ -55,7 +55,14 @@ export const profileImageUpload = multer({
   limits: { fileSize: 1024 * 1024 },
 }).single('profileImage');
 
+//product image upload
 export const productImageUpload = multer({
   storage: productImageStorage,
   limits: { fileSize: 1024 * 1024 },
 }).array('images', 6);
+
+// vendor document upload
+export const vendorDocument = multer({
+  storage: vendorDocumentStorage,
+  limits: { fileSize: 1024 * 1024 },
+}).single('identificationDocument');
