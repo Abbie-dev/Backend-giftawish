@@ -2,8 +2,17 @@ import asyncHandler from 'express-async-handler';
 import slugify from 'slugify';
 import Product from '../models/productModel.js';
 import Vendor from '../models/vendorModel.js';
+import Order from '../models/orderModel.js';
 import { productImageUpload } from '../config/multerConfig.js';
 import { deleteResourcesFromCloudinary } from '../utils/cloudinaryUtils.js';
+
+export const setUpAccount = asyncHandler(async (req, res) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export const addProduct = asyncHandler(async (req, res) => {
   const vendor = req.vendor._id;
@@ -198,4 +207,10 @@ export const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
-export const getAllOrders = asyncHandler(async (req, res) => {});
+export const getAllOrders = asyncHandler(async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
