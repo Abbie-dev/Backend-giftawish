@@ -48,3 +48,43 @@ export const productImageUpload = multer({
   storage: productImageStorage,
   limits: { fileSize: 1024 * 1024 },
 }).array('images', 6);
+
+export const uploadIdentificationDocument = (vendorId) => {
+  const identificationDocumentStorage = new multerCloudinary.CloudinaryStorage({
+    cloudinary: cloudinaryConfig.v2,
+    params: {
+      folder: `vendor-documents/${vendorId}`,
+      format: async (req, file) => {
+        if (isJpegOrPng(file)) {
+          return null;
+        }
+        //reject other formats
+        throw new Error('Invalid file format. Only JPEG and PNG are supported');
+      },
+    },
+  });
+  return multer({
+    storage: identificationDocumentStorage,
+    limits: { fileSize: 1024 * 1024 },
+  }).single('identificationDocument');
+};
+
+export const uploadBusinessRegistration = (vendorId) => {
+  const businessRegistrationStorage = new multerCloudinary.CloudinaryStorage({
+    cloudinary: cloudinaryConfig.v2,
+    params: {
+      folder: `vendor-documents/${vendorId}`,
+      format: async (req, file) => {
+        if (isJpegOrPng(file)) {
+          return null;
+        }
+        //reject other formats
+        throw new Error('Invalid file format. Only JPEG and PNG are supported');
+      },
+    },
+  });
+  return multer({
+    storage: businessRegistrationStorage,
+    limits: { fileSize: 1024 * 1024 },
+  }).single('registrationCertificate');
+};
