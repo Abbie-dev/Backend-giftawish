@@ -14,6 +14,14 @@ export const setUpAccount = asyncHandler(async (req, res) => {
   }
 });
 
+export const updateAccountSettings = asyncHandler(async (rreq, res) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export const addProduct = asyncHandler(async (req, res) => {
   const vendor = req.vendor._id;
   const { name, description, price, category, quantity, tags } = req.body;
