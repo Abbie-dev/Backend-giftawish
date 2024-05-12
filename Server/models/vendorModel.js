@@ -11,16 +11,19 @@ const vendorSchema = new mongoose.Schema(
     emailIsVerified: { type: Boolean, default: false },
     firstName: { type: String },
     lastName: { type: String },
-    businessRegistration: { type: String }, // Business registration document or number
+    businessRegistration: {
+      BusinessName: { type: String },
+      RegistrationNumber: { type: String },
+      RegistrationCertificate: { type: String },
+    },
     identificationDocument: { type: String }, // Identification document (passport, national ID, driver's license)
     bankDetails: {
       accountNumber: { type: String },
       bankName: { type: String },
       accountName: { type: String },
     },
+    verifiedSeller: { type: Boolean, default: false },
     shippingLocation: { type: String }, // Where products will be shipped from
-    guarantor: { type: String }, // Name of the guarantor
-    guarantorDocument: { type: String }, // Guarantor's identification document
     orders: [
       {
         orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
