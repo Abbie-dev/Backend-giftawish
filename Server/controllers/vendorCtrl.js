@@ -3,19 +3,28 @@ import slugify from 'slugify';
 import Product from '../models/productModel.js';
 import Vendor from '../models/vendorModel.js';
 import Order from '../models/orderModel.js';
-import { productImageUpload } from '../config/multerConfig.js';
+import {
+  productImageUpload,
+  uploadIdentificationDocument,
+  uploadBusinessRegistration,
+} from '../config/multerConfig.js';
 import { deleteResourcesFromCloudinary } from '../utils/cloudinaryUtils.js';
+import { verifyDocuments } from '../utils/verifyDocumentWithVision.js';
 
 export const setUpAccount = asyncHandler(async (req, res) => {
   try {
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
-});
+    const vendor = req.vendor._id;
 
-export const updateAccountSettings = asyncHandler(async (rreq, res) => {
-  try {
+    //update vendor profile details
+
+    vendor.firstName = req.body.firstName;
+    vendor.lastName = req.body.lastName;
+    vendor.shippingLocation = req.body.shippingLocation;
+    vendor.bankDetails = {
+      accountNumber: req.body.accountNumber,
+      bankName: req.body.bankName,
+      accountName: req.body.accountName,
+    };
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });

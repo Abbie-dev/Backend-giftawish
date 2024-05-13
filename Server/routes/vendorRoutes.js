@@ -10,17 +10,11 @@ import {
   uploadProductImage,
   getAllOrders,
   setUpAccount,
-  updateAccountSettings,
 } from '../controllers/vendorCtrl.js';
 
 const router = express.Router();
 
 router.post('/dashboard/account', isVendorAuthenticated, setUpAccount);
-router.put(
-  '/dashboard/update-account-settings',
-  isVendorAuthenticated,
-  updateAccountSettings
-);
 
 router.post(
   '/addProduct',
