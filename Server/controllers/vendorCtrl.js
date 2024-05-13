@@ -16,7 +16,8 @@ export const setUpAccount = asyncHandler(async (req, res) => {
     const vendor = req.vendor._id;
 
     //update vendor profile details
-
+    vendor.phoneNumber = req.body.phoneNumber || vendor.phoneNumber;
+    vendor.companyName = req.body.companyName || vendor.companyName;
     vendor.firstName = req.body.firstName;
     vendor.lastName = req.body.lastName;
     vendor.shippingLocation = req.body.shippingLocation;
@@ -25,6 +26,44 @@ export const setUpAccount = asyncHandler(async (req, res) => {
       bankName: req.body.bankName,
       accountName: req.body.accountName,
     };
+
+    //identification document upload and verification
+    const uploadIdentification = uploadIdentificationDocument(vendor._id);
+    const uploadId = await new Promise((resolve, reject) => {
+      uploadIdentification(req, res, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(req.file);
+        }
+      });
+    });
+
+    if (uploadId) {
+      //verify the document uploaded
+    }
+
+    //business registration document upload and verification
+    const uploadBusinessDocument = uploadBusinessRegistration(vendor._id);
+
+    const uploadBusinessCertificate = await new Promise((resolve, reject) => {
+      uploadBusinessDocument(req, res, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(req.file);
+        }
+      });
+    }).catch(() => null);
+
+    if (uploadBusinessCertificate) {
+      //verify the document uploaded , update the business name and reg number and vendor.isverifiedSeller
+    }
+
+    //save thr updated vendor details
+
+    const updatedVendor = await vendor.save();
+    res.status(200).json(updatedVendor);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
