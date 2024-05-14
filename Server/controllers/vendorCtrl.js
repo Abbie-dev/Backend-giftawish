@@ -265,6 +265,12 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 
 export const getAllOrders = asyncHandler(async (req, res) => {
   try {
+    const vendor = req.vendor._id;
+    const allOrders = await Order.find({ vendor });
+    if (!allOrders) {
+      return res.status(404).json({ message: 'Orders not found' });
+    }
+    res.status(200).json(allOrders);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
