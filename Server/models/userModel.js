@@ -58,6 +58,12 @@ const userSchema = new mongoose.Schema(
         ref: 'Wishlist',
       },
     ],
+    fulfilledWishlists: [
+      {
+        wishlist: { type: mongoose.Schema.Types.ObjectId, ref: 'Wishlist' },
+        fulfilledAt: { type: Date, default: Date.now },
+      },
+    ],
     address: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Address',

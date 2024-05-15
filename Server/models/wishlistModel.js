@@ -26,6 +26,7 @@ const wishlistSchema = new mongoose.Schema(
           ref: 'Product',
           required: true,
         },
+        fulfilled: { type: Boolean, default: false },
       },
     ],
   },
