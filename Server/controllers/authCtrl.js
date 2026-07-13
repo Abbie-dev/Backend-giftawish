@@ -205,6 +205,9 @@ const login = asynchandler(async (req, res) => {
     //store in cookies
     res.cookie('accessToken', token, {
       httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
     });
     //delete password from response
     delete userOrVendor._doc.password;
@@ -232,6 +235,9 @@ const adminLogin = asynchandler(async (req, res) => {
     //store in cookies
     res.cookie('accessToken', token, {
       httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
     });
     //delete password from response
     delete user._doc.password;
