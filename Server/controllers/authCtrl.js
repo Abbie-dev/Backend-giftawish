@@ -19,6 +19,14 @@ const registerUser = asynchandler(async (req, res) => {
     const { email } = req.body;
     const findUser = await User.findOne({ email });
     if (findUser) {
+      if (!findUser.emailIsVerified) {
+        const verificationCode = await sendVerificationEmail(email);
+        return res.status(200).json({
+          user: findUser,
+          message: 'An unverified account already exists. A new verification code has been sent to your email.',
+          verificationCode,
+        });
+      }
       return res.status(400).json({
         message: 'User already exists',
       });
@@ -42,6 +50,12 @@ const registerUser = asynchandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern || {})[0] || 'field';
+      return res.status(400).json({
+        message: `A user with this ${field} already exists.`,
+      });
+    }
     res.status(500).json({ message: error.message });
   }
 });
@@ -52,6 +66,15 @@ const registervendor = asynchandler(async (req, res) => {
     const { email } = req.body;
     const existingVendor = await Vendor.findOne({ email });
     if (existingVendor) {
+      if (!existingVendor.emailIsVerified) {
+        const verificationCode = await sendVerificationEmail(email);
+        return res.status(200).json({
+          vendor: existingVendor,
+          verificationCode,
+          message:
+            'An unverified vendor account already exists. A new verification code has been sent to your email.',
+        });
+      }
       return res.status(400).json({
         message: 'User already exists',
       });
@@ -69,6 +92,12 @@ const registervendor = asynchandler(async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern || {})[0] || 'field';
+      return res.status(400).json({
+        message: `A user with this ${field} already exists.`,
+      });
+    }
     res.status(500).json({ message: error.message });
   }
 });
