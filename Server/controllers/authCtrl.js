@@ -133,14 +133,25 @@ const verifyEmail = asynchandler(async (req, res) => {
     person.emailIsVerified = true;
     await person.save();
 
+    // generate token & store in cookies for seamless automatic login
+    const token = createToken(person._id);
+    res.cookie('accessToken', token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     // send a success email
-    const message = `<p>Your account has been verified. Please log in</p>`;
+    const message = `<p>Your account has been verified. Welcome to GiftAWish!</p>`;
     await sendEmail({
       email: email,
       subject: 'Your account has been verified',
       message,
     });
-    return res.status(200).json({ message: 'Email verified!', person });
+
+    delete person._doc.password;
+    return res.status(200).json({ message: 'Email verified!', user: person, person, token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

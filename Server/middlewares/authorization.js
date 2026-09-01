@@ -8,10 +8,13 @@ dotenv.config();
 export const isAuthenticated = asyncHandler(async (req, res, next) => {
   try {
     const token = req.cookies.accessToken;
+    console.log('Auth middleware - token:', token);
+    console.log('All cookies:', req.cookies);
     if (!token) {
       res.status(401).json({ error: 'You are not authorized' });
     } else {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log('Decoded JWT:', decoded);
       const userId = decoded.id;
       const user = await User.findById(userId).select('-password');
       if (!user) {
