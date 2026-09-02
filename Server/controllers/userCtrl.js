@@ -74,20 +74,20 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
       // Create a new address document
       const addressData = {
         user: req.user._id,
-        street: req.body.street,
-        city: req.body.city,
-        state: req.body.state,
-        postalCode: req.body.postalCode,
-        country: req.body.country,
+        street: req.body.street || 'N/A',
+        city: req.body.city || 'N/A',
+        state: req.body.state || req.body.city || 'N/A',
+        postalCode: req.body.postalCode || 'N/A',
+        country: req.body.country || 'N/A',
       };
       address = await Address.create(addressData);
     } else {
       // Update the existing address
-      address.street = req.body.street || address.street;
-      address.city = req.body.city || address.city;
-      address.state = req.body.state || address.state;
-      address.postalCode = req.body.postalCode || address.postalCode;
-      address.country = req.body.country || address.country;
+      address.street = req.body.street || address.street || 'N/A';
+      address.city = req.body.city || address.city || 'N/A';
+      address.state = req.body.state || address.state || req.body.city || 'N/A';
+      address.postalCode = req.body.postalCode || address.postalCode || 'N/A';
+      address.country = req.body.country || address.country || 'N/A';
       await address.save();
     }
 

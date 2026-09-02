@@ -7,19 +7,24 @@ const addressSchema = new mongoose.Schema(
     },
     street: {
       type: String,
-      required: true,
+      default: 'N/A',
     },
-
     city: {
       type: String,
-      required: true,
+      default: 'N/A',
     },
-    state: { type: String, required: true },
+    state: {
+      type: String,
+      default: 'N/A',
+    },
     country: {
       type: String,
-      required: true,
+      default: 'N/A',
     },
-    postalCode: { type: Number, required: true },
+    postalCode: {
+      type: mongoose.Schema.Types.Mixed,
+      default: 'N/A',
+    },
   },
   { timestamps: true }
 );

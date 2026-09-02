@@ -85,14 +85,19 @@ export const addItemsToWishlist = asyncHandler(async (req, res) => {
   const user = req.user._id;
 
   try {
-    const wishlist = await Wishlist.findOneAndUpdate(
-      { _id: wishlistId, user },
-      { $push: { items: { product: productId } } },
-      { new: true }
-    );
+    const wishlist = await Wishlist.findOne({ _id: wishlistId, user });
 
     if (!wishlist) {
       return res.status(404).json({ error: 'Wishlist not found' });
+    }
+
+    const alreadyAdded = wishlist.items.some(
+      (item) => item.product && item.product.toString() === productId.toString()
+    );
+
+    if (!alreadyAdded) {
+      wishlist.items.push({ product: productId });
+      await wishlist.save();
     }
 
     res.status(200).json(wishlist);
