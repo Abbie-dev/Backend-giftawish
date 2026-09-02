@@ -31,13 +31,17 @@ const registerUser = asynchandler(async (req, res) => {
         message: 'User already exists',
       });
     } else {
+      const defaultUsername = (req.body.email || 'user').split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(100 + Math.random() * 900);
       const newUser = new User({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        email: req.body.email,
+        firstname: req.body.firstname || 'User',
+        lastname: req.body.lastname || 'Account',
+        username: req.body.username || defaultUsername,
+        email: req.body.email.toLowerCase(),
         password: req.body.password,
       });
       const user = await newUser.save();
+      console.log('MongoDB User Created & Saved:', user._id, user.email, user.username);
+
       // Send verification email
       const verificationCode = await sendVerificationEmail(email);
 
