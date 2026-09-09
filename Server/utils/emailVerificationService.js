@@ -114,14 +114,23 @@ export const sendVerificationEmail = async (email) => {
   //store the verification code in the cache
   otpCache.set(email, verificationCode);
 
+  const plainText = `Welcome to GiftAWish!\n\nYour account verification code is: ${verificationCode}\n\nThis code will expire in 5 minutes. If you did not request this code, please ignore this email.\n\nThank you,\nThe GiftAWish Team`;
+
   const mailOptions = {
     from: {
       name: 'GiftAWish',
       email: process.env.EMAIL,
     },
+    replyTo: process.env.EMAIL,
     to: email,
-    subject: 'Your GiftAWish verification code',
+    subject: `GiftAWish Verification Code: ${verificationCode}`,
+    text: plainText,
     html: buildVerificationEmailHtml(verificationCode),
+    headers: {
+      'X-Priority': '1',
+      'X-MSMail-Priority': 'High',
+      'Importance': 'High',
+    },
   };
 
   // Send the email in the background to prevent request blocking
@@ -138,13 +147,17 @@ export const sendVerificationEmail = async (email) => {
 
 // Helper function to send success email
 export const sendEmail = async (options) => {
+  const plainText = options.message ? options.message.replace(/<[^>]*>?/gm, '') : '';
+
   const mailOptions = {
     from: {
       name: 'GiftAWish',
       email: process.env.EMAIL,
     },
+    replyTo: process.env.EMAIL,
     to: options.email,
     subject: options.subject,
+    text: plainText,
     html: buildGeneralEmailHtml(options.message),
   };
 
