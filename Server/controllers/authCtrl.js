@@ -322,25 +322,29 @@ const signInWithGoogle = asynchandler(async (req, res) => {
 const forgotPassword = asynchandler(async (req, res) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email ? email.toLowerCase() : '' });
     if (!user) {
-      return res.status(400).json({ message: 'user does not exist' });
+      return res.status(400).json({ message: 'User with this email address does not exist' });
     } else {
       const resetToken = jwt.sign({ user: user._id }, process.env.JWT_SECRET, {
         expiresIn: '1h',
       });
-      const resetPasswordLink = `${req.protocol}://${req.get(
-        'host'
-      )}/api/auth/reset-password/${resetToken}`;
-      //send email to reset password
-      const message = `<p>Click <a href="${resetPasswordLink}">here</a> reset your password.</p>`;
+      const frontendUrl = process.env.FRONTEND_URL || 'https://giftawish.vercel.app';
+      const resetPasswordLink = `${frontendUrl}/reset?token=${resetToken}`;
+      
+      const message = `<p>Hi ${user.firstname || 'User'},</p>
+      <p>We received a request to reset your password for your GiftAWish account.</p>
+      <p><a href="${resetPasswordLink}" style="display:inline-block;padding:12px 24px;background-color:#dd6421;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold;">Reset Password</a></p>
+      <p>Or copy and paste this link into your browser:<br/><a href="${resetPasswordLink}">${resetPasswordLink}</a></p>
+      <p>This link is valid for 1 hour. If you did not request a password reset, you can safely ignore this email.</p>`;
+      
       await sendEmail({
-        email: email,
-        subject: 'Reset Your Password',
+        email: user.email,
+        subject: 'Reset Your GiftAWish Password',
         message,
       });
       return res.status(200).json({
-        message: 'check your email to reset your password',
+        message: 'Password reset email sent! Please check your inbox.',
         resetPasswordLink,
       });
     }
@@ -355,29 +359,31 @@ const resetPassword = asynchandler(async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required' });
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { user } = decoded;
+    const { user: userId } = decoded;
     const hashedpassword = await bcrypt.hash(password, 10);
 
-    const findUser = await User.findByIdAndUpdate(user, {
-      password: hashedpassword,
-    });
+    const findUser = await User.findById(userId);
     if (!findUser) {
-      return res.status(400).json({ message: 'Invalid reset code' });
-    } else {
-      await findUser.save();
-      //send success email
-      const email = user.email;
-      const message = `<p>Your password has been reset. Please log in</p>`;
-      await sendEmail({
-        email: email,
-        subject: 'Your password has been reset',
-        message,
-      });
-      return res.status(200).json('Password reset successfully');
+      return res.status(400).json({ message: 'User not found or link has expired' });
     }
+    findUser.password = hashedpassword;
+    findUser.markModified('password');
+    await findUser.save();
+
+    const message = `<p>Hi ${findUser.firstname || 'User'},</p><p>Your GiftAWish account password has been reset successfully. You can now log in with your new password.</p>`;
+    await sendEmail({
+      email: findUser.email,
+      subject: 'Your GiftAWish password has been reset',
+      message,
+    });
+    return res.status(200).json({ message: 'Password reset successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    return res.status(400).json({ message: 'Invalid or expired password reset link' });
   }
 });
 
