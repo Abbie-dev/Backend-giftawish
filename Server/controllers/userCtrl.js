@@ -73,7 +73,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     if (!address) {
       // Create a new address document
       const addressData = {
-        user: req.user._id,
+        user: user._id,
         street: req.body.street || 'N/A',
         city: req.body.city || 'N/A',
         state: req.body.state || req.body.city || 'N/A',
@@ -94,9 +94,11 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
     // Associate the address with the user
     user.address = address._id;
 
-    //check if a profile image was uploaded
+    //check if a profile image was uploaded or passed as string
     if (req.file) {
       user.profileImage = req.file.filename;
+    } else if (req.body.profileImage) {
+      user.profileImage = req.body.profileImage;
     }
 
     // Parse the birthday string into a Date object

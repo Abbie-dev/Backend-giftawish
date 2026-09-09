@@ -126,11 +126,6 @@ export const sendVerificationEmail = async (email) => {
     subject: `GiftAWish Verification Code: ${verificationCode}`,
     text: plainText,
     html: buildVerificationEmailHtml(verificationCode),
-    headers: {
-      'X-Priority': '1',
-      'X-MSMail-Priority': 'High',
-      'Importance': 'High',
-    },
   };
 
   // Send the email in the background to prevent request blocking
